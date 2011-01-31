@@ -11,11 +11,14 @@ namespace NConfig
     {
         private static IInternalConfigSystem originalConfiguration;
 
+
         private ConnectionStringsSection connectionsSection;
 
-        // Get IConfigSystem form ConfigurationManager  also we should affect HttpConfigurationSystem .s_ConfigSystem
+
+        // Get IConfigSystem form ConfigurationManager also we should affect HttpConfigurationSystem.s_ConfigSystem
         public static void SubstituteInternalConfigSystem(NSystemDefaultConfig newConfigSystem)
         {
+
             var fieldInfo = typeof(ConfigurationManager).GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
 
             if (originalConfiguration == null)

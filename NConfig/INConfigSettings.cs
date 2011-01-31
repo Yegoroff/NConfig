@@ -5,6 +5,8 @@ namespace NConfig
     internal interface INConfigSettings
     {
         string HostAlias { get; }
+
+        bool IsWeb { get; }
     }
 
 

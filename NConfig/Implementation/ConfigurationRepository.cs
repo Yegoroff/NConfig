@@ -6,17 +6,18 @@ namespace NConfig
 {
     internal class ConfigurationRepository : IConfigurationRepository
     {
-        private static readonly Dictionary<string, Configuration> configCache = new Dictionary<string, Configuration>();
+        private readonly Dictionary<string, Configuration> configCache = new Dictionary<string, Configuration>();
 
 
         public Configuration GetFileConfiguration(string fileName)
         {
-            if (!File.Exists(fileName))
+            string filePath = ToAbsolutePath(fileName);
+
+            if (!File.Exists(filePath))
                 return null;
 
             lock (configCache)
             {
-                string filePath = Path.GetFullPath(fileName);
                 Configuration result;
                 if (!configCache.TryGetValue(filePath, out result))
                 {
@@ -28,5 +29,11 @@ namespace NConfig
                 return result;
             }
         }
+
+        protected virtual string ToAbsolutePath(string path)
+        {
+            return Path.GetFullPath(path);
+        }
+
     }
 }

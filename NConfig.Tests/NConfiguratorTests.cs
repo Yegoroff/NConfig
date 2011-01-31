@@ -13,7 +13,7 @@ namespace NConfig.Tests
     {
 
         [Test]
-        public void ReadConectStringsFromNotExistingFile()
+        public void Should_provide_default_ConectStrings_for_non_existing_file()
         {
             var connStrings = NConfigurator.FromFile("NotExisting.config").ConnectionStrings;
 
@@ -21,7 +21,7 @@ namespace NConfig.Tests
         }
 
         [Test]
-        public void ReadAppSettingsFromNotExistingFile()
+        public void Should_provide_default_AppSettings_for_non_existing_file()
         {
             var settings = NConfigurator.FromFile("NotExisting.config").AppSettings; 
 
@@ -29,7 +29,7 @@ namespace NConfig.Tests
         }
 
         [Test]
-        public void MergeAppSettingsWithFile()
+        public void Should_merge_default_AppSettings_with_defined_in_file()
         {
             var settings = NConfigurator.FromFile("Configs//NConfigTest.config").AppSettings;
 
@@ -38,7 +38,7 @@ namespace NConfig.Tests
         }
 
         [Test]
-        public void MergeConectStringsWithFile()
+        public void Should_merge_default_ConectStrings_with_defined_in_file()
         {
             var connStrings = NConfigurator.FromFile("Configs//NConfigTest.config").ConnectionStrings;
 
@@ -46,28 +46,31 @@ namespace NConfig.Tests
             Assert.That(connStrings["TestConnectString"].ConnectionString, Is.EqualTo("NConfigTest.ConnectString"));
         }
 
-
         [Test]
-        public void MultifileConfiguration()
+        public void Should_override_sections_by_the_most_recent_config_file()
         {
             var testSection = NConfigurator.FromFiles("Configs//Aliased.config", "Configs//NConfigTest.config").GetSection<TestSection>();
-            var conString = NConfigurator.FromFiles("Configs//Aliased.config", "Configs//NConfigTest.config").ConnectionStrings["TestConnectString"].ConnectionString;
 
             Assert.That(testSection.Value, Is.EqualTo("Tests.Aliased.Value"));
+        }
+
+        [Test]
+        public void Should_override_ConnectString_by_the_most_recent_config_file()
+        {
+            var conString = NConfigurator.FromFiles("Configs//Aliased.config", "Configs//NConfigTest.config").ConnectionStrings["TestConnectString"].ConnectionString;
+
             Assert.That(conString, Is.EqualTo("Aliased.ConnectString"));
         }
 
-
         [Test]
-        public void DefaultConfigCorrespondsToConfigurationManager()
+        public void Should_corresponds_to_ConfigurationManager_by_default()
         {
             Assert.That(NConfigurator.Default.ConnectionStrings, Is.EqualTo(ConfigurationManager.ConnectionStrings));
             Assert.That(NConfigurator.Default.AppSettings, Is.EqualTo(ConfigurationManager.AppSettings));
         }
 
-
         [Test]
-        public void DefaultConfigPromotion()
+        public void Should_promote_custom_configuration_to_default()
         {
             try
             {
@@ -84,9 +87,8 @@ namespace NConfig.Tests
 
         }
 
-
         [Test]
-        public void SystemDefaultConfigPromotion()
+        public void Should_promote_custom_configuration_to_system_default()
         {
             try
             {
@@ -102,7 +104,6 @@ namespace NConfig.Tests
                 NConfigurator.RestoreSystemDefaults();
             }
         }
-
 
     }
 }

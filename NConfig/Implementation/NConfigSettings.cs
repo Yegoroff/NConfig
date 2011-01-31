@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.IO;
 
 namespace NConfig
 {
@@ -10,12 +11,14 @@ namespace NConfig
 
         private readonly IConfigurationRepository repository;
         private readonly string hostAlias;
+        private readonly bool isWeb;
 
 
         public NConfigSettings(IConfigurationRepository repository)
         {
             this.repository = repository;
             hostAlias = DetectHostAlias();
+            isWeb = DetectIsWeb();
         }
 
 
@@ -24,6 +27,14 @@ namespace NConfig
             get
             {
                 return hostAlias;
+            }
+        }
+
+        public bool IsWeb
+        {
+            get
+            {
+                return isWeb;
             }
         }
 
@@ -48,5 +59,16 @@ namespace NConfig
             }
             return hostName;
         }
+
+        /// <summary>
+        /// Detects if the current application is web based.
+        /// Detection method is not natural (HostingEnvironment.IsHosted) but allows no to upload System.Web assembly.
+        /// </summary>
+        public static bool DetectIsWeb()
+        {
+            string configFile = Path.GetFileName(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            return configFile.Equals("web.config", StringComparison.InvariantCultureIgnoreCase);
+        }
+    
     }
 }

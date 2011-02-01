@@ -81,13 +81,13 @@ namespace NConfig
             return configuration.GetSectionGroup(groupName) as T;
         }
 
-        public static INConfiguration PromoteToDefault(this INConfiguration config)
+        public static INConfiguration SetAsDefault(this INConfiguration config)
         {
             NConfigurator.Default = config;
             return config;
         }
 
-        public static INConfiguration PromoteToSystemDefault(this INConfiguration config)
+        public static INConfiguration SetAsSystemDefault(this INConfiguration config)
         {
             NConfigurator.Default = config;
             NSystemDefaultConfiguration.SubstituteInternalConfigSystem(new NSystemDefaultConfiguration(NConfigurator.Repository, NConfigurator.MergerRegistry, config.FileNames));

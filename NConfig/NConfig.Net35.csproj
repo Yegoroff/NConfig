@@ -5,41 +5,39 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CB790B12-FF29-4217-AE4B-47750F6B3C51}</ProjectGuid>
+    <ProjectGuid>{71C37E4F-BF9B-4FDE-99E7-995AEA87CEA6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NConfig.Tests</RootNamespace>
-    <AssemblyName>NConfig.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>NConfig</RootNamespace>
+    <AssemblyName>NConfig</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\Net35\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\Net35\NConfig.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\Net35\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Release\Net35\NConfig.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\lib\NUnit\framework\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Rhino.Mocks">
-      <HintPath>..\lib\Rhino.Mocks\Rhino.Mocks.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,29 +45,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestSection.cs" />
-    <Compile Include="NConfiguratorTests.cs" />
+    <Compile Include="Implementation\NSectionMergerRegistry.cs" />
+    <Compile Include="INSectionMergerRegistry.cs" />
+    <Compile Include="Implementation\Mergers\AppSettingsMerger.cs" />
+    <Compile Include="Implementation\Mergers\ConectionStringsMerger.cs" />
+    <Compile Include="Implementation\Mergers\DefaultMerger.cs" />
+    <Compile Include="NSectionMerger.cs" />
+    <Compile Include="Implementation\ConfigurationRepositoryWeb.cs" />
+    <Compile Include="Util\ConfigurationExtension.cs" />
+    <Compile Include="HostMap\HostMappingConfigurationElement.cs" />
+    <Compile Include="HostMap\HostMappingConfigurationCollection.cs" />
+    <Compile Include="Util\IListExtension.cs" />
+    <Compile Include="Implementation\ConfigurationRepository.cs" />
+    <Compile Include="Implementation\NSystemDefaultConfiguration.cs" />
+    <Compile Include="Implementation\NConfigSettings.cs" />
+    <Compile Include="IConfigurationRepository.cs" />
+    <Compile Include="INConfigSettings.cs" />
+    <Compile Include="Implementation\NMultifileConfiguration.cs" />
+    <Compile Include="INConfiguration.cs" />
+    <Compile Include="HostMap\HostMapSection.cs" />
+    <Compile Include="NConfigurator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NConfig\NConfig.csproj">
-      <Project>{0DE97382-565B-4083-AE6E-C3EA3B1AB83D}</Project>
-      <Name>NConfig</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Configs\Aliased.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Configs\Tests.Aliased.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Configs\NConfigTest.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

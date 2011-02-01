@@ -74,7 +74,7 @@ namespace NConfig.Tests
         {
             try
             {
-                NConfigurator.UsingFile("Configs//NConfigTest.config").PromoteToDefault();
+                NConfigurator.UsingFile("Configs//NConfigTest.config").SetAsDefault();
 
                 Assert.That(NConfigurator.Default.FileNames, Is.EqualTo(NConfigurator.UsingFile("Configs//NConfigTest.config").FileNames));
                 Assert.That(NConfigurator.Default.ConnectionStrings, Is.EqualTo(NConfigurator.UsingFile("Configs//NConfigTest.config").ConnectionStrings));
@@ -82,7 +82,7 @@ namespace NConfig.Tests
             }
             finally
             {
-                NConfigurator.UsingFiles().PromoteToDefault(); // Restore default Default
+                NConfigurator.UsingFiles().SetAsDefault(); // Restore default Default
             }
 
         }
@@ -94,7 +94,7 @@ namespace NConfig.Tests
             {
                 var connectStrings = NConfigurator.UsingFile("Configs//NConfigTest.config").ConnectionStrings;
                 var appSettings = NConfigurator.UsingFile("Configs//NConfigTest.config").AppSettings;
-                NConfigurator.UsingFile("Configs//NConfigTest.config").PromoteToSystemDefault();
+                NConfigurator.UsingFile("Configs//NConfigTest.config").SetAsSystemDefault();
 
                 Assert.That(ConfigurationManager.ConnectionStrings, Is.EqualTo(connectStrings));
                 Assert.That(ConfigurationManager.AppSettings, Is.EqualTo(appSettings));

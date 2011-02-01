@@ -90,7 +90,7 @@ namespace NConfig
         public static INConfiguration PromoteToSystemDefault(this INConfiguration config)
         {
             NConfigurator.Default = config;
-            NSystemDefaultConfig.SubstituteInternalConfigSystem(new NSystemDefaultConfig(NConfigurator.Repository, config.FileNames));
+            NSystemDefaultConfiguration.SubstituteInternalConfigSystem(new NSystemDefaultConfiguration(NConfigurator.Repository, NConfigurator.MergerRegistry, config.FileNames));
             return config;
         }
 

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace NConfig
 {
-    internal sealed class NSystemDefaultConfig : NMultifileConfiguration, IInternalConfigSystem
+    internal sealed class NSystemDefaultConfiguration : NMultifileConfiguration, IInternalConfigSystem
     {
         private static IInternalConfigSystem originalConfiguration;
 
@@ -16,14 +16,14 @@ namespace NConfig
 
 
         // Get IConfigSystem form ConfigurationManager also we should affect HttpConfigurationSystem.s_ConfigSystem
-        public static void SubstituteInternalConfigSystem(NSystemDefaultConfig newConfigSystem)
+        public static void SubstituteInternalConfigSystem(NSystemDefaultConfiguration newConfigSystem)
         {
 
             var fieldInfo = typeof(ConfigurationManager).GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
 
             if (originalConfiguration == null)
             {
-                ConfigurationManager.GetSection("appSettings"); // This will init COnfiguration manager internal config system.
+                ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
                 originalConfiguration = fieldInfo.GetValue(null) as IInternalConfigSystem;
             }
 
@@ -42,8 +42,8 @@ namespace NConfig
 
 
 
-        public NSystemDefaultConfig(IConfigurationRepository repository, IList<string> fileNames) :
-            base (repository, fileNames) { }
+        public NSystemDefaultConfiguration(IConfigurationRepository repository, INSectionMergerRegistry mergerRegistry, IList<string> fileNames) :
+            base (repository, mergerRegistry, fileNames) { }
 
 
         protected override object GetAppWebSection(string sectionName)
@@ -52,16 +52,17 @@ namespace NConfig
         }
 
 
-        public ConnectionStringsSection ConnectionsSection
+        /// <summary>
+        /// Gets the connection strings section.
+        /// Used to provide caching of connection strings.
+        /// </summary>
+        /// <value>The connection strings section.</value>
+        public ConnectionStringsSection ConnectionStringsSection
         {
             get
             {
                 if (connectionsSection == null) 
-                {
-                    connectionsSection = new ConnectionStringsSection();
-                    foreach(ConnectionStringSettings set in ConnectionStrings)
-                        connectionsSection.ConnectionStrings.Add(set);
-                }
+                    connectionsSection = GetSection("connectionStrings") as ConnectionStringsSection;
                 return connectionsSection;                
             }
         }
@@ -72,7 +73,8 @@ namespace NConfig
         object IInternalConfigSystem.GetSection(string configKey)
         {
             if (configKey == "connectionStrings")
-                return ConnectionsSection;
+                return ConnectionStringsSection;
+
             if (configKey == "appSettings")
                 return this.AppSettings;
 

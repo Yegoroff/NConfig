@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+
 using System.Linq;
+using System;
+using System.Configuration;
 
 namespace NConfig
 {
@@ -8,9 +11,21 @@ namespace NConfig
     /// </summary>
     public static class NConfigurator
     {
-        private static readonly IConfigurationRepository repository = CreateRepository();
-        private static readonly INConfigSettings settings = new NConfigSettings(repository);
-        private static INConfiguration defaultConfig = new NMultifileConfiguration(repository, null);
+        private static readonly INSectionMergerRegistry mergerRegistry;
+        private static readonly IConfigurationRepository repository;
+        private static readonly INConfigSettings settings;
+        private static INConfiguration defaultConfig;
+
+
+        static NConfigurator()
+        {
+            mergerRegistry = CreateSectionMerger();
+            repository = CreateRepository();
+            settings = new NConfigSettings(repository);
+            defaultConfig = new NMultifileConfiguration(repository, mergerRegistry, null);
+        }
+
+
 
 
         /// <summary>
@@ -34,16 +49,16 @@ namespace NConfig
         ///     Provides access to configuration stored in the specified client configuration file.
         /// </summary>
         /// <param name="fileName">The path of the configuration file.</param>
-        public static INConfiguration FromFile(string fileName)
+        public static INConfiguration UsingFile(string fileName)
         {
-            return new NMultifileConfiguration(repository, new List<string> {settings.GetAliasedFileName(fileName), fileName});
+            return new NMultifileConfiguration(Repository, MergerRegistry, new List<string> {settings.GetAliasedFileName(fileName), fileName});
         }
 
         /// <summary>
         ///     Provides access to configuration stored in the specified client configuration files.
         /// </summary>
         /// <param name="fileName">The array of path of the configuration files.</param>
-        public static INConfiguration FromFiles(params string[] fileNames)
+        public static INConfiguration UsingFiles(params string[] fileNames)
         {
             List<string> configNames = new List<string>(fileNames.Length * 2);
             foreach (string name in fileNames)
@@ -52,7 +67,7 @@ namespace NConfig
                 configNames.Add(name);
             }
 
-            return new NMultifileConfiguration(repository, configNames);
+            return new NMultifileConfiguration(Repository, MergerRegistry, configNames);
         }
 
         /// <summary>
@@ -60,9 +75,18 @@ namespace NConfig
         /// </summary>
         public static void RestoreSystemDefaults()
         {
-            NSystemDefaultConfig.RestoreInternalConfigSystem();
+            NSystemDefaultConfiguration.RestoreInternalConfigSystem();
         }
 
+        public static void RegisterSectionMerger(Type sectionType, NSectionMerger merger)
+        {
+            MergerRegistry.AddMerger(sectionType, merger);
+        }
+
+        public static void RegisterSectionMerger<TSectionType>(NSectionMerger merger)
+        {
+            RegisterSectionMerger(typeof(TSectionType), merger);
+        }
 
 
         internal static IConfigurationRepository Repository
@@ -70,6 +94,14 @@ namespace NConfig
             get
             {
                 return repository;
+            }
+        }
+
+        internal static INSectionMergerRegistry MergerRegistry
+        {
+            get
+            {
+                return mergerRegistry;
             }
         }
 
@@ -90,5 +122,13 @@ namespace NConfig
                 return new ConfigurationRepository();
         }
 
+        private static NSectionMergerRegistry CreateSectionMerger()
+        {
+            var result = new NSectionMergerRegistry();
+            result.AddMerger(typeof(AppSettingsSection), new AppSettingsMerger());
+            result.AddMerger(typeof(ConnectionStringsSection), new ConnectionStringsMerger());
+            return result;
+        }
     }
 }
+

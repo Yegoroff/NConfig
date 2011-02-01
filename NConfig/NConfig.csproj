@@ -42,13 +42,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\NSectionMergerRegistry.cs" />
+    <Compile Include="INSectionMergerRegistry.cs" />
+    <Compile Include="Implementation\Mergers\AppSettingsMerger.cs" />
+    <Compile Include="Implementation\Mergers\ConectionStringsMerger.cs" />
+    <Compile Include="Implementation\Mergers\DefaultMerger.cs" />
+    <Compile Include="NSectionMerger.cs" />
     <Compile Include="Implementation\ConfigurationRepositoryWeb.cs" />
     <Compile Include="Util\ConfigurationExtension.cs" />
     <Compile Include="HostMap\HostMappingConfigurationElement.cs" />
     <Compile Include="HostMap\HostMappingConfigurationCollection.cs" />
     <Compile Include="Util\IListExtension.cs" />
     <Compile Include="Implementation\ConfigurationRepository.cs" />
-    <Compile Include="Implementation\NSystemDefaultConfig.cs" />
+    <Compile Include="Implementation\NSystemDefaultConfiguration.cs" />
     <Compile Include="Implementation\NConfigSettings.cs" />
     <Compile Include="IConfigurationRepository.cs" />
     <Compile Include="INConfigSettings.cs" />

@@ -1,32 +1,39 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
 using System.Collections.Specialized;
+using System.Configuration;
 
 namespace NConfig
 {
     internal class NMultifileConfiguration : INConfiguration
     {
         private readonly IConfigurationRepository repository;
+        private readonly INSectionMergerRegistry mergerRegistry;
         private readonly IList<string> fileNames;
 
+        // Property memorization.
         private ConnectionStringSettingsCollection connectionStrings;
         private NameValueCollection appSettings;
 
 
-        internal NMultifileConfiguration(IConfigurationRepository repository, IList<string> fileNames)
+        internal NMultifileConfiguration(IConfigurationRepository repository, 
+            INSectionMergerRegistry mergerRegistry, IList<string> fileNames)
         {
             this.repository = repository;
+            this.mergerRegistry = mergerRegistry;
             this.fileNames = fileNames ?? new List<string>();
         }
 
 
         public IConfigurationRepository Repository
         {
-            get
-            {
-                return repository;
-            }
+            get { return repository; }
         }
+
+        public INSectionMergerRegistry MergerRegistry
+        {
+            get { return mergerRegistry; }
+        }
+
 
 
         protected virtual object GetAppWebSection(string sectionName)
@@ -34,6 +41,23 @@ namespace NConfig
             return ConfigurationManager.GetSection(sectionName);
         }
 
+        protected ConfigurationSection GetDefaultSection(string sectionName)
+        {
+            object section = GetAppWebSection(sectionName);
+
+            // AppSettingsSection doesn't returned from ConfirationManager, instead returned NameValueCollection.
+            if (sectionName.Equals("appSettings", System.StringComparison.InvariantCultureIgnoreCase))
+            {
+                AppSettingsSection appSection = new AppSettingsSection();
+                var appSettings = section as NameValueCollection;
+                if (appSettings != null)
+                    for (int i = 0; i < appSettings.Count; i++)
+                        appSection.Settings.Add(appSettings.GetKey(i), appSettings[i]);
+                return appSection;
+            }
+
+            return section as ConfigurationSection;
+        }
 
         private ConfigurationSection GetFileSection(string fileName, string sectionName)
         {
@@ -41,56 +65,27 @@ namespace NConfig
             if (config != null)
                 return config.GetSection(sectionName);
 
-            return null;
+            return null;           
         }
 
 
-//TODO: Consider ISectionMerger { TConfigSection Merge(IEnumerable<TConfigSection>); }
+
         private ConnectionStringSettingsCollection GetConnectionStrings()
         {
-            var connections = new Dictionary<string, ConnectionStringSettings>();
-
-            ConnectionStringsSection section = GetAppWebSection("connectionStrings") as ConnectionStringsSection;
-            foreach (ConnectionStringSettings settings in section.ConnectionStrings)
-                connections[settings.Name] = settings;
-
-            foreach (string fileName in FileNames.Reverse())
-            {
-                section = GetFileSection(fileName, "connectionStrings") as ConnectionStringsSection;
-                if (section != null)
-                    foreach (ConnectionStringSettings settings in section.ConnectionStrings)
-                        connections[settings.Name] = settings;
-            }
-
             var result = new ConnectionStringSettingsCollection();
-            foreach (ConnectionStringSettings settings in connections.Values)
+            ConnectionStringsSection section = GetSection("connectionStrings") as ConnectionStringsSection;
+            foreach (ConnectionStringSettings settings in section.ConnectionStrings)
                 result.Add(settings);
-
             return result;
         }
 
         private NameValueCollection GetAppSettings()
         {
-            var settings = new Dictionary<string, string>();
-
-            var appSettings = GetAppWebSection("appSettings") as NameValueCollection;
-            if (appSettings != null)
-                for (int i = 0; i < appSettings.Count; i++)
-                    settings[appSettings.GetKey(i)] = appSettings[i];
-
-            
-            AppSettingsSection section;
-            foreach (string fileName in FileNames.Reverse()) // The order of files shoud be from most Important to lower
-            {
-                section = GetFileSection(fileName, "appSettings") as AppSettingsSection;
-                if (section != null)
-                    foreach (KeyValueConfigurationElement element in section.Settings)
-                        settings[element.Key] = element.Value;
-            }
-
             var result = new NameValueCollection();
-            foreach (var element in settings)
-                result.Add(element.Key, element.Value);
+            AppSettingsSection appSection = GetSection("appSettings") as AppSettingsSection;
+            if (appSection != null)
+                foreach (KeyValueConfigurationElement element in appSection.Settings)
+                    result.Add(element.Key, element.Value);
 
             return result;
         }
@@ -98,7 +93,10 @@ namespace NConfig
 
         #region INConfiguration Members
 
-        public IList<string> FileNames { get { return fileNames; } }
+        public IList<string> FileNames
+        {
+            get { return fileNames; }
+        }
 
         public ConnectionStringSettingsCollection ConnectionStrings
         {
@@ -123,28 +121,41 @@ namespace NConfig
 
         public ConfigurationSection GetSection(string sectionName)
         {
+            List<ConfigurationSection> sections = new List<ConfigurationSection>();
+            
+            // Read section from custom configuration files.
             ConfigurationSection section;
             foreach (string fileName in FileNames) // The order of files shoud be from most Important to lower
             {
                 section = GetFileSection(fileName, sectionName);
-                if (section != null && section.ElementInformation.IsPresent == true)
-                    return section;
+                if (section != null && section.ElementInformation.IsPresent)
+                    sections.Add(section);
             }
            
-            return GetAppWebSection(sectionName) as ConfigurationSection;
+            // Read Section form Configuration Manager.
+            section = GetDefaultSection(sectionName);
+            if (section != null) // Add not presented sections too, because of non required sections should be returned.
+                sections.Add(section);
+            
+            // Merge collected sections.
+            if (sections.Count > 0) {
+                NSectionMerger merger = MergerRegistry.GetMerger(sections[0].GetType());
+                return merger.Merge(sections);
+            }
+
+            return null;
         }
 
+        //TODO: Provide Configuration group section union among config files.
         public ConfigurationSectionGroup GetSectionGroup(string groupName)
         {
-
-            // Reads configuration group from file prefixed with Alias., if file not exists then reads from "fileName" file
-
             ConfigurationSectionGroup group = null;
             foreach (string fileName in FileNames) // The order of files shoud be from most Important to lower
             {
                 Configuration config = Repository.GetFileConfiguration(fileName);
                 if (config != null)
                     group = config.GetSectionGroup(groupName);
+
                 if (group != null)
                     return group;
             }

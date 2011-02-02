@@ -78,7 +78,13 @@ namespace NConfig
             if (configKey == "appSettings")
                 return this.AppSettings;
 
-            return base.GetSection(configKey);
+            // Try to return ConfigurationSection object
+            object res = base.GetSection(configKey);
+            if (res != null)
+                return res;
+
+            // Return any object returned by Default configuration system.
+            return GetAppWebSection(configKey);
         }
 
         void IInternalConfigSystem.RefreshConfig(string sectionName)

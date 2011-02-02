@@ -138,11 +138,13 @@ namespace NConfig
                 sections.Add(section);
             
             // Merge collected sections.
-            if (sections.Count > 0) {
+            if (sections.Count > 1) {
                 NSectionMerger merger = MergerRegistry.GetMerger(sections[0].GetType());
                 return merger.Merge(sections);
             }
 
+            if (sections.Count == 1)
+                return sections[0];
             return null;
         }
 

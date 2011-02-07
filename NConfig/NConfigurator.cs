@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using System.Linq;
 using System;
 using System.Configuration;
@@ -57,7 +56,7 @@ namespace NConfig
         /// <summary>
         ///     Provides access to configuration stored in the specified client configuration files.
         /// </summary>
-        /// <param name="fileName">The array of path of the configuration files.</param>
+        /// <param name="fileNames">The array of path of the configuration files.</param>
         public static INConfiguration UsingFiles(params string[] fileNames)
         {
             List<string> configNames = new List<string>(fileNames.Length * 2);
@@ -75,7 +74,7 @@ namespace NConfig
         /// </summary>
         public static void RestoreSystemDefaults()
         {
-            NSystemDefaultConfiguration.RestoreInternalConfigSystem();
+            NSystemConfigurator.RestoreInternalConfigSystem();
         }
 
         public static void RegisterSectionMerger(Type sectionType, NSectionMerger merger)

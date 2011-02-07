@@ -46,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementation\NSectionMergerRegistry.cs" />
+    <Compile Include="Implementation\System\NSystemConfigurator.cs" />
+    <Compile Include="Implementation\System\Web\NConfigSystem.cs" />
+    <Compile Include="Implementation\System\Web\NConfigRecord.cs" />
+    <Compile Include="Implementation\System\Web\NConfigRoot.cs" />
     <Compile Include="INSectionMergerRegistry.cs" />
     <Compile Include="Implementation\Mergers\AppSettingsMerger.cs" />
     <Compile Include="Implementation\Mergers\ConectionStringsMerger.cs" />
@@ -57,7 +61,7 @@
     <Compile Include="HostMap\HostMappingConfigurationCollection.cs" />
     <Compile Include="Util\IListExtension.cs" />
     <Compile Include="Implementation\ConfigurationRepository.cs" />
-    <Compile Include="Implementation\NSystemDefaultConfiguration.cs" />
+    <Compile Include="Implementation\System\NSystemDefaultConfiguration.cs" />
     <Compile Include="Implementation\NConfigSettings.cs" />
     <Compile Include="IConfigurationRepository.cs" />
     <Compile Include="INConfigSettings.cs" />

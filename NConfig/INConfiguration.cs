@@ -90,7 +90,11 @@ namespace NConfig
         public static INConfiguration SetAsSystemDefault(this INConfiguration config)
         {
             NConfigurator.Default = config;
-            NSystemDefaultConfiguration.SubstituteInternalConfigSystem(new NSystemDefaultConfiguration(NConfigurator.Repository, NConfigurator.MergerRegistry, config.FileNames));
+            
+            if (NConfigurator.Settings.IsWeb)
+                NSystemConfigurator.SubstituteWebConfigSystem(config);
+            else
+                NSystemConfigurator.SubstituteClientConfigSystem(config);
             return config;
         }
 

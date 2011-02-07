@@ -9,41 +9,16 @@ namespace NConfig
 {
     internal sealed class NSystemDefaultConfiguration : NMultifileConfiguration, IInternalConfigSystem
     {
-        private static IInternalConfigSystem originalConfiguration;
-
-
         private ConnectionStringsSection connectionsSection;
+        private readonly IInternalConfigSystem originalConfiguration;
 
 
-        // Get IConfigSystem form ConfigurationManager also we should affect HttpConfigurationSystem.s_ConfigSystem
-        public static void SubstituteInternalConfigSystem(NSystemDefaultConfiguration newConfigSystem)
+        public NSystemDefaultConfiguration(IInternalConfigSystem originalConfiguration, IConfigurationRepository repository, INSectionMergerRegistry mergerRegistry, IList<string> fileNames) :
+            base(repository, mergerRegistry, fileNames)
         {
-
-            var fieldInfo = typeof(ConfigurationManager).GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
-
-            if (originalConfiguration == null)
-            {
-                ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
-                originalConfiguration = fieldInfo.GetValue(null) as IInternalConfigSystem;
-            }
-
-            fieldInfo.SetValue(null, newConfigSystem);
+            this.originalConfiguration = originalConfiguration;
         }
 
-        public static void RestoreInternalConfigSystem()
-        {
-            if (originalConfiguration != null)
-            {
-                var fieldInfo = typeof(ConfigurationManager).GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
-                fieldInfo.SetValue(null, originalConfiguration);
-                originalConfiguration = null;
-            }
-        }
-
-
-
-        public NSystemDefaultConfiguration(IConfigurationRepository repository, INSectionMergerRegistry mergerRegistry, IList<string> fileNames) :
-            base (repository, mergerRegistry, fileNames) { }
 
 
         protected override object GetAppWebSection(string sectionName)

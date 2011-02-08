@@ -32,7 +32,7 @@ namespace NConfig
             var decoratedConfigSytem =
                 new NSystemDefaultConfiguration(originalConfiguration, NConfigurator.Repository, NConfigurator.MergerRegistry, newConfigSystem.FileNames);
 
-            //TODO: Add ability to restore if possible.
+            //TODO: Add ability to restore original configuration if possible.
 
 
             // Web Part (10 level black magic starts here)

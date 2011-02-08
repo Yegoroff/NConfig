@@ -77,11 +77,21 @@ namespace NConfig
             NSystemConfigurator.RestoreInternalConfigSystem();
         }
 
+        /// <summary>
+        /// Registers the section merger for speicfied section type.
+        /// </summary>
+        /// <param name="sectionType">Type of the section.</param>
+        /// <param name="merger">The section merger instance.</param>
         public static void RegisterSectionMerger(Type sectionType, NSectionMerger merger)
         {
             MergerRegistry.AddMerger(sectionType, merger);
         }
 
+        /// <summary>
+        /// Registers the section merger for speicfied section type.
+        /// </summary>
+        /// <typeparam name="TSectionType">The type of the section.</typeparam>
+        /// <param name="merger">The section merger instance.</param>
         public static void RegisterSectionMerger<TSectionType>(NSectionMerger merger)
         {
             RegisterSectionMerger(typeof(TSectionType), merger);

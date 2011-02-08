@@ -60,7 +60,7 @@
     <Compile Include="Util\ConfigurationExtension.cs" />
     <Compile Include="HostMap\HostMappingConfigurationElement.cs" />
     <Compile Include="HostMap\HostMappingConfigurationCollection.cs" />
-    <Compile Include="Util\MemoizeExtension.cs" />
+    <Compile Include="Util\MemoizeExtensions.cs" />
     <Compile Include="Util\IListExtension.cs" />
     <Compile Include="Implementation\ConfigurationRepository.cs" />
     <Compile Include="Implementation\System\NSystemDefaultConfiguration.cs" />

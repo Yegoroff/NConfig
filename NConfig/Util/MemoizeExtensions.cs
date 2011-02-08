@@ -4,9 +4,8 @@ using System;
 
 namespace NConfig
 {
-    internal static class MemoizeExtension
+    internal static class MemoizeExtensions
     {
-
         public static Func<TArg1, TArg2, TResult> Memoize<TArg1, TArg2, TResult>(this Func<TArg1, TArg2, TResult> f)
         {
             // We can apply recursive Memoization but it will be quite cumbersome
@@ -29,7 +28,6 @@ namespace NConfig
                 return value;
             };
         }
-
 
         public static Func<TArg, TResult> Memoize<TArg, TResult>(this Func<TArg, TResult> f)
         {

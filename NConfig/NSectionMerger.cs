@@ -14,7 +14,7 @@ namespace NConfig
         /// Merges the specified configuration sections.
         /// </summary>
         /// <param name="sections">The sections to merge in order from most important to lower.</param>
-        /// <returns>The merge resulting section.</returns>
+        /// <returns>The merge result section.</returns>
         public abstract ConfigurationSection Merge(IEnumerable<ConfigurationSection> sections);
     }
 

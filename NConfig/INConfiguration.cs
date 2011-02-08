@@ -65,28 +65,60 @@ namespace NConfig
     /// </summary>
     public static class INConfigurationExtensions
     {
-
+        /// <summary>
+        /// Retrieves configuration section with a name that corresponds to <typeparamref name="T"/> short type name.
+        /// </summary>
+        /// <typeparam name="T">Configuration section Type that inherits <see cref="System.Configuration.ConfigurationSection"/>.</typeparam>
+        /// <returns>
+        /// The specified ConfigurationSection object of type <typeparamref name="T"/>,
+        /// or null if the section does not exist.
+        /// </returns>
         public static T GetSection<T>(this INConfiguration configuration) where T : ConfigurationSection
         {
             return configuration.GetSection<T>(typeof(T).Name);
         }
 
+        /// <summary>
+        /// Retrieves a specified configuration section of type <typeparamref name="T"/> for the
+        /// current configuration file set.
+        /// </summary>
+        /// <typeparam name="T">Configuration section Type that inherits <see cref="System.Configuration.ConfigurationSection"/>.</typeparam>
+        /// <param name="configuration"></param>
+        /// <param name="sectionName">The configuration section path and name.</param>
+        /// <returns>
+        /// The specified ConfigurationSection object of type <typeparamref name="T"/>,
+        /// or null if the section does not exist.
+        /// </returns>
         public static T GetSection<T>(this INConfiguration configuration, string sectionName) where T : ConfigurationSection
         {
             return configuration.GetSection(sectionName) as T;
         }
 
+        /// <summary>
+        /// Gets the specified Configuration Section Group object of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">Configuration section group Type that inherits <see cref="System.Configuration.ConfigurationSectionGroup"/>.</typeparam>
+        /// <param name="configuration"></param>
+        /// <param name="groupName">The path name of the <see cref="System.Configuration.ConfigurationSectionGroup"/> to return.</param>
+        /// <returns>The section group specified.</returns>
         public static T GetGetSectionGroup<T>(this INConfiguration configuration, string groupName) where T : ConfigurationSectionGroup
         {
             return configuration.GetSectionGroup(groupName) as T;
         }
 
+        /// <summary>
+        /// Sets this configuration as the NConfigurator default configuration.
+        /// </summary>
         public static INConfiguration SetAsDefault(this INConfiguration config)
         {
             NConfigurator.Default = config;
             return config;
         }
 
+        /// <summary>
+        /// Sets this configuration as the NConfigurator default and System wide default configuration.
+        /// Thus you can use <see cref="System.Configuration.ConfigurationManager"/> to access this configuration.
+        /// </summary>
         public static INConfiguration SetAsSystemDefault(this INConfiguration config)
         {
             NConfigurator.Default = config;

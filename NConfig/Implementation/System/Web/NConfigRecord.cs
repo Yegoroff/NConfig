@@ -6,6 +6,8 @@ namespace NConfig
         private readonly IInternalConfigRecord baseRecord;
         private readonly INConfiguration configuration;
 
+        private readonly object syncObject = new object();
+        private bool isEntered;
 
         public NConfigRecord(IInternalConfigRecord baseRecord, INConfiguration configuration)
         {
@@ -49,11 +51,29 @@ namespace NConfig
 
         public object GetSection(string configKey)
         {
-            object result = configuration.GetSection(configKey);
+            object result = null;
 
-            if (result == null)
-                return baseRecord.GetSection(configKey);
+            if (!isEntered)
+            {
+                lock (syncObject)
+                {
+                    if (!isEntered)
+                    {
+                        try
+                        {
+                            isEntered = true;
+                            result = configuration.GetSection(configKey);
 
+                            if (result == null)
+                                return baseRecord.GetSection(configKey);
+                        }
+                        finally
+                        {
+                            isEntered = false;
+                        }
+                    }
+                }
+            }
             return result;
         }
 

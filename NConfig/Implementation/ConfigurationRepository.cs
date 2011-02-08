@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System;
 
 namespace NConfig
 {
     internal class ConfigurationRepository : IConfigurationRepository
     {
         private readonly Dictionary<string, Configuration> configCache = new Dictionary<string, Configuration>();
-
+        private static string rootPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
 
         public Configuration GetFileConfiguration(string fileName)
         {
@@ -32,7 +33,11 @@ namespace NConfig
 
         protected virtual string ToAbsolutePath(string path)
         {
+            if (!Path.IsPathRooted(path))
+                path = Path.Combine(rootPath, path);
+
             return Path.GetFullPath(path);
+
         }
 
     }

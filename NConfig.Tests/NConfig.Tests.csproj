@@ -42,7 +42,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -50,12 +49,6 @@
     <Compile Include="TestSection.cs" />
     <Compile Include="NConfiguratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NConfig\NConfig.csproj">
-      <Project>{0DE97382-565B-4083-AE6E-C3EA3B1AB83D}</Project>
-      <Name>NConfig</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -70,6 +63,12 @@
     <None Include="Configs\NConfigTest.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NConfig\NConfig.csproj">
+      <Project>{0DE97382-565B-4083-AE6E-C3EA3B1AB83D}</Project>
+      <Name>NConfig</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

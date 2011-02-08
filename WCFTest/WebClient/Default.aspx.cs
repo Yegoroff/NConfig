@@ -22,9 +22,9 @@ namespace WebClient
             ClientSection cs = HttpContext.Current.GetSection("system.serviceModel/client") as ClientSection;
             int cc = cs.Endpoints.Count;
 
-//            ISimpleService client = new SimpleServiceClient("WSHttpBinding_ISimpleService");
+            ISimpleService client = new SimpleServiceClient("WSHttpBinding_ISimpleService");
 
-//            client.PrintMessage("Web Client message.");
+            client.PrintMessage("Web Client message.");
         }
     }
 }

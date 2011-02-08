@@ -25,7 +25,6 @@ namespace NConfig
             PropertySetter = (PropertySetter = PropertySetterAction).Memoize();
             FieldGetter = (FieldGetter = FieldGetterFunc).Memoize();
             FieldSetter = (FieldSetter = FieldSetterAction).Memoize();
-
             MethodAccessor = (MethodAccessor = MethodFunc).Memoize();
 
             this.accessedType = accessedType;

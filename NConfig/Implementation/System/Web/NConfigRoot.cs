@@ -5,13 +5,20 @@ namespace NConfig
     internal class NConfigRoot : IInternalConfigRoot
     {
         private readonly IInternalConfigRoot baseRoot;
+        private readonly INConfiguration configuration;
 
-
-        public NConfigRoot(IInternalConfigRoot baseRoot)
+        public NConfigRoot(IInternalConfigRoot baseRoot, INConfiguration configuration)
         {
             this.baseRoot = baseRoot;
+            this.configuration = configuration;
         }
 
+
+        private IInternalConfigRecord CreateConfigRecord(IInternalConfigRecord baseRecord)
+        {
+            //TODO: Consider memorization like IInternalConfigRecord -> NConfigRecord.(Threadsafe)
+            return new NConfigRecord(baseRecord, configuration);
+        }
 
         #region IInternalConfigRoot Members
 
@@ -55,8 +62,8 @@ namespace NConfig
 
         public IInternalConfigRecord GetConfigRecord(string configPath)
         {
-            //TODO: Consider memorization like IInternalConfigRecord -> NConfigRecord.
-            return new NConfigRecord(baseRoot.GetConfigRecord(configPath));
+
+            return CreateConfigRecord(baseRoot.GetConfigRecord(configPath));
         }
 
         public object GetSection(string section, string configPath)
@@ -71,8 +78,7 @@ namespace NConfig
 
         public IInternalConfigRecord GetUniqueConfigRecord(string configPath)
         {
-            //TODO:  Consider memorization like IInternalConfigRecord -> NConfigRecord.
-            return new NConfigRecord(baseRoot.GetUniqueConfigRecord(configPath));
+            return CreateConfigRecord(baseRoot.GetUniqueConfigRecord(configPath));
         }
 
         public void Init(IInternalConfigHost host, bool isDesignTime)

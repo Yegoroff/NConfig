@@ -7,12 +7,13 @@ namespace NConfig
     {
         private readonly IConfigSystem baseConfigSystem;
         private readonly NConfigRoot decoratedRoot;
+        private readonly INConfiguration configuration;
 
-
-        public NConfigSystem(IConfigSystem baseConfigSystem)
+        public NConfigSystem(IConfigSystem baseConfigSystem, INConfiguration configuration)
         {
             this.baseConfigSystem = baseConfigSystem;
-            decoratedRoot = new NConfigRoot(baseConfigSystem.Root);
+            this.configuration = configuration;
+            decoratedRoot = new NConfigRoot(baseConfigSystem.Root, configuration);
         }
 
 

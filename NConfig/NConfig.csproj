@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementation\NSectionMergerRegistry.cs" />
+    <Compile Include="Implementation\System\ReflectionAccessor.cs" />
     <Compile Include="Implementation\System\NSystemConfigurator.cs" />
     <Compile Include="Implementation\System\Web\NConfigSystem.cs" />
     <Compile Include="Implementation\System\Web\NConfigRecord.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Util\ConfigurationExtension.cs" />
     <Compile Include="HostMap\HostMappingConfigurationElement.cs" />
     <Compile Include="HostMap\HostMappingConfigurationCollection.cs" />
+    <Compile Include="Util\MemoizeExtension.cs" />
     <Compile Include="Util\IListExtension.cs" />
     <Compile Include="Implementation\ConfigurationRepository.cs" />
     <Compile Include="Implementation\System\NSystemDefaultConfiguration.cs" />

@@ -4,11 +4,13 @@ namespace NConfig
     internal class NConfigRecord : IInternalConfigRecord
     {
         private readonly IInternalConfigRecord baseRecord;
+        private readonly INConfiguration configuration;
 
 
-        public NConfigRecord(IInternalConfigRecord baseRecord)
+        public NConfigRecord(IInternalConfigRecord baseRecord, INConfiguration configuration)
         {
             this.baseRecord = baseRecord;
+            this.configuration = configuration;
         }
 
 
@@ -47,7 +49,12 @@ namespace NConfig
 
         public object GetSection(string configKey)
         {
-            return baseRecord.GetSection(configKey);
+            object result = configuration.GetSection(configKey);
+
+            if (result == null)
+                return baseRecord.GetSection(configKey);
+
+            return result;
         }
 
         public void RefreshSection(string configKey)

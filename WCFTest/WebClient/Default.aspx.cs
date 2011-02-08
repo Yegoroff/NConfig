@@ -18,7 +18,6 @@ namespace WebClient
         {
             Thread.Sleep(1500);
 
-            NConfig.NSystemConfigurator.CheckSubstituted();
 
             ClientSection cs = HttpContext.Current.GetSection("system.serviceModel/client") as ClientSection;
             int cc = cs.Endpoints.Count;

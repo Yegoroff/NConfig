@@ -10,72 +10,88 @@ namespace NConfig
     /// <summary>
     /// Incapsulates forbidden magic that allows to smoothly use NConfig and System.Configuration
     /// </summary>
-    internal static class NSystemConfigurator 
+    internal static class NSystemConfigurator
     {
+
+        //TODO: Consider thread safety
+
         private static IInternalConfigSystem originalConfiguration;
 
 
         public static void SubstituteWebConfigSystem(INConfiguration newConfigSystem)
         {
-    //TODO: REAFACTOR fiels accessors, and other stuff (to proxy classes ?)
-
             // Common Part
+            if (originalConfiguration != null)
+                throw new InvalidOperationException("Web system default configuration already substituted.");
 
-            var fieldInfo = typeof(ConfigurationManager).GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
+            var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
 
-            if (originalConfiguration == null)
-            {
-                ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
-                originalConfiguration = fieldInfo.GetValue(null) as IInternalConfigSystem;
+            ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
+            originalConfiguration = configManager.GetField<IInternalConfigSystem>("s_configSystem");
 
-    //TODO: REFACTOR  add ability to restore.
-                // Web Part (10 level black magic starts here)
-                Type configSysType = originalConfiguration.GetType(); // In web this should be System.Web.Configuration.HttpConfigurationSystem
-
-                var configSystemField = configSysType.GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
-                var configRootField = configSysType.GetField("s_configRoot", BindingFlags.NonPublic | BindingFlags.Static);
-
-
-                // Get original values.
-                IConfigSystem configSystem = configSystemField.GetValue(null) as IConfigSystem;
-                NConfigSystem decoratedSystem = new NConfigSystem(configSystem);
-
-                // Substitute to decorated instances.
-                configSystemField.SetValue(null, decoratedSystem);
-                configRootField.SetValue(null, decoratedSystem.Root);
-
-
-                // Clear cache so it will filled with new decorated instances 
-                // config path = WebConfigurationHost.RootWebConfigPathAndDefaultSiteID  -- see who use this maybe access wuot reflection.
-                // HttpRuntime.CacheInternal.Remove("d" + configPath)
-            }
-
-            NSystemDefaultConfiguration decoratedConfigSytem = 
+            var decoratedConfigSytem =
                 new NSystemDefaultConfiguration(originalConfiguration, NConfigurator.Repository, NConfigurator.MergerRegistry, newConfigSystem.FileNames);
 
-            fieldInfo.SetValue(null, decoratedConfigSytem);
+            //TODO: Add ability to restore if possible.
+
+
+            // Web Part (10 level black magic starts here)
+            var httpConfigurationSystem = new ReflectionAccessor(originalConfiguration.GetType());
+
+            // Get original values.
+            IConfigSystem configSystem = httpConfigurationSystem.GetField<IConfigSystem>("s_configSystem");
+            NConfigSystem decoratedSystem = new NConfigSystem(configSystem, decoratedConfigSytem);
+
+            // Substitute to decorated instances.
+            httpConfigurationSystem.SetField("s_configSystem", decoratedSystem);
+            httpConfigurationSystem.SetField("s_configRoot", decoratedSystem.Root);
+
+            // Clear cache, so it will be refilled with new decorated records.
+            var systemWebAss = httpConfigurationSystem.AccessedType.Assembly;
+            var hostingEnviroment = new ReflectionAccessor(systemWebAss.GetType("System.Web.Hosting.HostingEnvironment"));
+            string siteId = hostingEnviroment.GetProperty<string>("SiteID");
+            string configPath = "dmachine/webroot/" + siteId;
+
+            var httpRuntime = new ReflectionAccessor(systemWebAss.GetType("System.Web.HttpRuntime"));
+            var cache = new ReflectionAccessor(httpRuntime.GetProperty("CacheInternal"));
+
+            while (true)
+            {
+                cache.Execute("Remove", configPath);
+
+                int index = configPath.LastIndexOf('/');
+                if (index < 0)
+                    break;
+                configPath = configPath.Substring(0, index);
+            }
+
+            configManager.SetField("s_configSystem", decoratedConfigSytem);
         }
 
         public static void SubstituteClientConfigSystem(INConfiguration newConfigSystem)
         {
 
-            var fieldInfo = typeof(ConfigurationManager).GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
+            var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
 
             if (originalConfiguration == null)
             {
                 ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
-                originalConfiguration = fieldInfo.GetValue(null) as IInternalConfigSystem;
+                originalConfiguration = configManager.GetField<IInternalConfigSystem>("s_configSystem");
             }
 
-            fieldInfo.SetValue(null, newConfigSystem);
+            NSystemDefaultConfiguration decoratedConfigSytem =
+                new NSystemDefaultConfiguration(originalConfiguration, NConfigurator.Repository, NConfigurator.MergerRegistry, newConfigSystem.FileNames);
+
+            configManager.SetField("s_configSystem", decoratedConfigSytem);
         }
+
 
         public static void RestoreInternalConfigSystem()
         {
             if (originalConfiguration != null)
             {
-                var fieldInfo = typeof(ConfigurationManager).GetField("s_configSystem", BindingFlags.NonPublic | BindingFlags.Static);
-                fieldInfo.SetValue(null, originalConfiguration);
+                var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
+                configManager.SetField("s_configSystem", originalConfiguration);
                 originalConfiguration = null;
             }
         }

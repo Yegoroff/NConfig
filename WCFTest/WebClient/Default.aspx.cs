@@ -20,11 +20,12 @@ namespace WebClient
 
 
             ClientSection cs = HttpContext.Current.GetSection("system.serviceModel/client") as ClientSection;
-            int cc = cs.Endpoints.Count;
+            if (cs.Endpoints.Count > 0)
+                endpointAddress.InnerText = cs.Endpoints[0].Address.AbsoluteUri;
 
-            ISimpleService client = new SimpleServiceClient("WSHttpBinding_ISimpleService");
 
-            client.PrintMessage("Web Client message.");
+            ISimpleService client = new SimpleServiceClient();
+            client.PrintMessage("Calling from Web Client.");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace NConfig
 
         public void AddMerger(Type sectionType, NSectionMerger merger)
         {
-            registry.Add(sectionType, merger);
+            registry[sectionType] = merger;
         }
 
         public NSectionMerger GetMerger(Type sectionType)

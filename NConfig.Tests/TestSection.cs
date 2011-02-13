@@ -9,6 +9,7 @@ namespace NConfig.Tests
         public string Value
         {
             get { return (string)this["value"]; }
+            set { this["value"] = value; }
         }
 
     }

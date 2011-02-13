@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using NConfig;
 using System.Configuration;
+using System.Linq;
+using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace NConfig.Tests
 {
@@ -34,7 +33,7 @@ namespace NConfig.Tests
             var settings = NConfigurator.UsingFile("Configs//NConfigTest.config").AppSettings;
 
             Assert.That(settings.Count, Is.EqualTo(3));
-            Assert.That(settings["Test"], Is.EqualTo("NConfigTest.Value"));
+            Assert.That(settings["Test"], Is.EqualTo("NConfigTest"));
         }
 
         [Test]
@@ -43,7 +42,7 @@ namespace NConfig.Tests
             var connStrings = NConfigurator.UsingFile("Configs//NConfigTest.config").ConnectionStrings;
 
             Assert.That(connStrings.Count, Is.EqualTo(4));
-            Assert.That(connStrings["TestConnectString"].ConnectionString, Is.EqualTo("NConfigTest.ConnectString"));
+            Assert.That(connStrings["TestConnectString"].ConnectionString, Is.EqualTo("NConfigTest"));
         }
 
         [Test]
@@ -51,7 +50,7 @@ namespace NConfig.Tests
         {
             var testSection = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").GetSection<TestSection>();
 
-            Assert.That(testSection.Value, Is.EqualTo("Tests.Aliased.Value"));
+            Assert.That(testSection.Value, Is.EqualTo("Tests.Aliased"));
         }
 
         [Test]
@@ -59,7 +58,7 @@ namespace NConfig.Tests
         {
             var conString = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").ConnectionStrings["TestConnectString"].ConnectionString;
 
-            Assert.That(conString, Is.EqualTo("Aliased.ConnectString"));
+            Assert.That(conString, Is.EqualTo("Aliased"));
         }
 
         [Test]
@@ -113,6 +112,48 @@ namespace NConfig.Tests
             Assert.That(section, Is.Not.Null);
         }
 
+        [Test]
+        public void Should_call_section_merger_registered_for_section_type()
+        {
+            NSectionMerger<TestSection> mergerStub = MockRepository.GenerateStub<NSectionMerger<TestSection>>();
+            mergerStub.Stub(m => m.Merge((IEnumerable<TestSection>)null)).IgnoreArguments().Return(null);
+
+            try
+            {
+                NConfigurator.RegisterSectionMerger<TestSection>(mergerStub);
+                var testSection = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").GetSection<TestSection>();
+
+                mergerStub.AssertWasCalled(m => m.Merge((IEnumerable<TestSection>)null), opt => opt.IgnoreArguments());
+            }
+            finally
+            {
+                NConfigurator.RegisterSectionMerger<TestSection>(new DefaultMerger());
+            }
+
+        }
+
+        [Test]
+        public void Should_pass_sections_to_section_merger_starting_from_most_important ()
+        {
+            NSectionMerger<TestSection> mergerStub = MockRepository.GenerateStub<NSectionMerger<TestSection>>();
+
+            // Just concatenate all section Values. 
+            Func<IEnumerable<TestSection>, TestSection> mergeFunc = sections => new TestSection() { Value = sections.Aggregate("", (v, s) => v += s.Value) };
+            mergerStub.Stub(m => m.Merge((IEnumerable<TestSection>)null)).IgnoreArguments().Do(mergeFunc);
+
+            try
+            {
+                NConfigurator.RegisterSectionMerger<TestSection>(mergerStub);
+                var testSection = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").GetSection<TestSection>();
+
+                //Conactenated values should be concatenated in order: from the most important section to lower.
+                Assert.That(testSection.Value, Is.EqualTo("Tests.AliasedAliased"));
+            }
+            finally
+            {
+                NConfigurator.RegisterSectionMerger<TestSection>(new DefaultMerger());
+            }
+        }
 
     }
 }

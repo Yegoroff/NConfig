@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ServiceModel;
-using Services.Services;
-using System.Security.Cryptography.X509Certificates;
 using NConfig;
+using Services.Services;
 
 namespace Host
 {
@@ -13,8 +9,7 @@ namespace Host
     {
         static void Main(string[] args)
         {
-
-            //NConfigurator.FromFile("HostSvc.config").PromoteToSystemDefault();
+            NConfigurator.UsingFile("HostSvc.config").SetAsSystemDefault();
 
             ServiceHost host = new ServiceHost(typeof(SimpleService));
             host.Open();

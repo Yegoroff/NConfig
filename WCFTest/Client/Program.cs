@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.ServiceModel;
-using Services.ServiceContracts;
+using System.Threading;
 using NConfig;
-using System.ServiceModel.Configuration;
-using System.Reflection;
+using Services.ServiceContracts;
 
 namespace Client
 {
@@ -17,8 +12,9 @@ namespace Client
         {
             NConfigurator.UsingFile("ClientSvc.config").SetAsSystemDefault();
 
-            Thread.Sleep(1000);
+            Thread.Sleep(1000); // this will get WCF service app some fora to run
             Run("WsHttpSimple");
+
             Console.ReadLine();
         }
 
@@ -29,11 +25,7 @@ namespace Client
 
             ChannelFactory<ISimpleService> factory =  new ChannelFactory<ISimpleService>(endpointConfigurationName);
             ISimpleService proxy = factory.CreateChannel();
-
-            proxy.PrintMessage("1");
-            proxy.PrintMessage("2");
-            proxy.PrintMessage("3");
-
+            proxy.PrintMessage("Calling form Console Client.");
             ((ICommunicationObject)proxy).Close();
         }
     }

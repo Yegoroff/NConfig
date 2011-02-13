@@ -247,7 +247,6 @@ div.accountInfo
 .title
 {
     display: block;
-    float: left;
     text-align: left;
     width: auto;
 }

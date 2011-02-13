@@ -58,12 +58,9 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Content Include="Styles\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
-    <Content Include="App_Data\Scripts\jquery-1.4.1-vsdoc.js" />
-    <Content Include="App_Data\Scripts\jquery-1.4.1.js" />
-    <Content Include="App_Data\Scripts\jquery-1.4.1.min.js" />
+    <Content Include="Styles\Site.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -92,18 +89,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Site.Master.cs">
-      <DependentUpon>Site.Master</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Site.Master.designer.cs">
-      <DependentUpon>Site.Master</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="Site.Master" />
-  </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>

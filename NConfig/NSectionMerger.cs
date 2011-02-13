@@ -13,7 +13,7 @@ namespace NConfig
         /// <summary>
         /// Merges the specified configuration sections.
         /// </summary>
-        /// <param name="sections">The sections to merge in order from most important to lower.</param>
+        /// <param name="sections">The sections to merge in order from the most important to lower.</param>
         /// <returns>The merge result section.</returns>
         public abstract ConfigurationSection Merge(IEnumerable<ConfigurationSection> sections);
     }
@@ -29,7 +29,7 @@ namespace NConfig
         /// <summary>
         /// Merges the specified configuration sections.
         /// </summary>
-        /// <param name="sections">The sections to merge in order from most important to lower.</param>
+        /// <param name="sections">The sections to merge in order from the most important to lower.</param>
         /// <returns>The merge resulting section.</returns>
         public override sealed ConfigurationSection Merge(IEnumerable<ConfigurationSection> sections)
         {
@@ -39,7 +39,7 @@ namespace NConfig
         /// <summary>
         /// Merges the specified typed configuration sections.
         /// </summary>
-        /// <param name="sections">The sections to merge in order from most important to lower.</param>
+        /// <param name="sections">The sections to merge in order from the most important to lower.</param>
         /// <returns>The merge resulting section.</returns>
         public abstract T Merge(IEnumerable<T> sections);
     }

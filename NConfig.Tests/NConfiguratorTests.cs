@@ -4,6 +4,8 @@ using System.Configuration;
 using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
+using System.Diagnostics;
+using System.IO;
 
 namespace NConfig.Tests
 {
@@ -30,7 +32,7 @@ namespace NConfig.Tests
         [Test]
         public void Should_merge_default_AppSettings_with_defined_in_file()
         {
-            var settings = NConfigurator.UsingFile("Configs//NConfigTest.config").AppSettings;
+            var settings = NConfigurator.UsingFile("Configs\\NConfigTest.config").AppSettings;
 
             Assert.That(settings.Count, Is.EqualTo(3));
             Assert.That(settings["Test"], Is.EqualTo("NConfigTest"));
@@ -39,7 +41,7 @@ namespace NConfig.Tests
         [Test]
         public void Should_merge_default_ConectStrings_with_defined_in_file()
         {
-            var connStrings = NConfigurator.UsingFile("Configs//NConfigTest.config").ConnectionStrings;
+            var connStrings = NConfigurator.UsingFile("Configs\\NConfigTest.config").ConnectionStrings;
 
             Assert.That(connStrings.Count, Is.EqualTo(4));
             Assert.That(connStrings["TestConnectString"].ConnectionString, Is.EqualTo("NConfigTest"));
@@ -48,7 +50,7 @@ namespace NConfig.Tests
         [Test]
         public void Should_override_sections_by_the_most_recent_config_file()
         {
-            var testSection = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").GetSection<TestSection>();
+            var testSection = NConfigurator.UsingFiles("Configs\\Aliased.config", "Configs\\NConfigTest.config").GetSection<TestSection>();
 
             Assert.That(testSection.Value, Is.EqualTo("Tests.Aliased"));
         }
@@ -56,7 +58,7 @@ namespace NConfig.Tests
         [Test]
         public void Should_override_ConnectString_by_the_most_recent_config_file()
         {
-            var conString = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").ConnectionStrings["TestConnectString"].ConnectionString;
+            var conString = NConfigurator.UsingFiles("Configs\\Aliased.config", "Configs\\NConfigTest.config").ConnectionStrings["TestConnectString"].ConnectionString;
 
             Assert.That(conString, Is.EqualTo("Aliased"));
         }
@@ -73,11 +75,11 @@ namespace NConfig.Tests
         {
             try
             {
-                NConfigurator.UsingFile("Configs//NConfigTest.config").SetAsDefault();
+                NConfigurator.UsingFile("Configs\\NConfigTest.config").SetAsDefault();
 
-                Assert.That(NConfigurator.Default.FileNames, Is.EqualTo(NConfigurator.UsingFile("Configs//NConfigTest.config").FileNames));
-                Assert.That(NConfigurator.Default.ConnectionStrings, Is.EqualTo(NConfigurator.UsingFile("Configs//NConfigTest.config").ConnectionStrings));
-                Assert.That(NConfigurator.Default.AppSettings, Is.EqualTo(NConfigurator.UsingFile("Configs//NConfigTest.config").AppSettings));
+                Assert.That(NConfigurator.Default.FileNames, Is.EqualTo(NConfigurator.UsingFile("Configs\\NConfigTest.config").FileNames));
+                Assert.That(NConfigurator.Default.ConnectionStrings, Is.EqualTo(NConfigurator.UsingFile("Configs\\NConfigTest.config").ConnectionStrings));
+                Assert.That(NConfigurator.Default.AppSettings, Is.EqualTo(NConfigurator.UsingFile("Configs\\NConfigTest.config").AppSettings));
             }
             finally
             {
@@ -91,9 +93,9 @@ namespace NConfig.Tests
         {
             try
             {
-                var connectStrings = NConfigurator.UsingFile("Configs//NConfigTest.config").ConnectionStrings;
-                var appSettings = NConfigurator.UsingFile("Configs//NConfigTest.config").AppSettings;
-                NConfigurator.UsingFile("Configs//NConfigTest.config").SetAsSystemDefault();
+                var connectStrings = NConfigurator.UsingFile("Configs\\NConfigTest.config").ConnectionStrings;
+                var appSettings = NConfigurator.UsingFile("Configs\\NConfigTest.config").AppSettings;
+                NConfigurator.UsingFile("Configs\\NConfigTest.config").SetAsSystemDefault();
 
                 Assert.That(ConfigurationManager.ConnectionStrings, Is.EqualTo(connectStrings));
                 Assert.That(ConfigurationManager.AppSettings, Is.EqualTo(appSettings));
@@ -107,7 +109,7 @@ namespace NConfig.Tests
         [Test]
         public void Should_return_non_requied_section_instance()
         {
-            var section = NConfigurator.UsingFile("Configs//NConfigTest.config").GetSection("system.diagnostics");
+            var section = NConfigurator.UsingFile("Configs\\NConfigTest.config").GetSection("system.diagnostics");
 
             Assert.That(section, Is.Not.Null);
         }
@@ -121,7 +123,7 @@ namespace NConfig.Tests
             try
             {
                 NConfigurator.RegisterSectionMerger<TestSection>(mergerStub);
-                var testSection = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").GetSection<TestSection>();
+                var testSection = NConfigurator.UsingFiles("Configs\\Aliased.config", "Configs\\NConfigTest.config").GetSection<TestSection>();
 
                 mergerStub.AssertWasCalled(m => m.Merge((IEnumerable<TestSection>)null), opt => opt.IgnoreArguments());
             }
@@ -144,7 +146,7 @@ namespace NConfig.Tests
             try
             {
                 NConfigurator.RegisterSectionMerger<TestSection>(mergerStub);
-                var testSection = NConfigurator.UsingFiles("Configs//Aliased.config", "Configs//NConfigTest.config").GetSection<TestSection>();
+                var testSection = NConfigurator.UsingFiles("Configs\\Aliased.config", "Configs\\NConfigTest.config").GetSection<TestSection>();
 
                 //Conactenated values should be concatenated in order: from the most important section to lower.
                 Assert.That(testSection.Value, Is.EqualTo("Tests.AliasedAliased"));

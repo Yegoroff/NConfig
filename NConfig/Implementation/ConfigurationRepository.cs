@@ -8,7 +8,7 @@ namespace NConfig
     internal class ConfigurationRepository : IConfigurationRepository
     {
         private readonly Dictionary<string, Configuration> configCache = new Dictionary<string, Configuration>();
-        private static string rootPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+        private static string rootPath = GetRootPath();
 
         public Configuration GetFileConfiguration(string fileName)
         {
@@ -37,8 +37,11 @@ namespace NConfig
                 path = Path.Combine(rootPath, path);
 
             return Path.GetFullPath(path);
-
         }
 
+        private static string GetRootPath()
+        {
+            return AppDomain.CurrentDomain.BaseDirectory;
+        }
     }
 }

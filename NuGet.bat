@@ -5,16 +5,17 @@
 
 @echo ==========================
 @echo Building NConfig.
+@rmdir bin /s /q
 %DEVENV100% /nologo /build Release "NConfig.sln"
 @if errorlevel 1 goto error
 
 @echo ==========================
 @echo Copying NConfig assemblies.
-mkdir NuGet\lib
+@rmdir NuGet\lib /s /q
+@mkdir NuGet\lib
 xcopy bin\Release NuGet\lib /s /y
 @if errorlevel 0 goto nuget
 @goto error
-
 
 :nuget
 @echo ==========================

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<package> 
+  <metadata> 
+    <id>NConfig</id> 
+    <version>1.0.0</version> 
+    <authors>Alexander Yegorov</authors>
+    <description>Multifile, host-based configuration for .Net</description> 
+    <language>en-US</language>
+    <projectUrl>https://github.com/Yegoroff/NConfig</projectUrl>
+  </metadata> 
+</package>

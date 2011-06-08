@@ -2,6 +2,7 @@
 
 namespace NConfig
 {
+
     internal interface IConfigurationRepository
     {
         /// <summary>

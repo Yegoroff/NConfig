@@ -13,38 +13,26 @@ namespace NConfig
     internal static class NSystemConfigurator
     {
 
-        //TODO: Consider thread safety
-
         private static IInternalConfigSystem originalConfiguration;
 
 
-        public static void SubstituteWebConfigSystem(INConfiguration newConfigSystem)
+        public static void SubstituteWebConfigSystem(IConfigurationFactorty factory, IList<string> fileNames)
         {
-            // Common Part
-            if (originalConfiguration != null)
-                throw new InvalidOperationException("Web system default configuration already substituted.");
-
-            var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
-
-            ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
-            originalConfiguration = configManager.GetField<IInternalConfigSystem>("s_configSystem");
-
-            var decoratedConfigSytem =
-                new NSystemDefaultConfiguration(originalConfiguration, NConfigurator.Repository, NConfigurator.MergerRegistry, newConfigSystem.FileNames);
+            IInternalConfigSystem originalConfiguration =  ReplaceConfigurationManager(factory, fileNames);
 
             //TODO: Add ability to restore original configuration if possible.
-
 
             // Web Part (10 level black magic starts here)
             var httpConfigurationSystem = new ReflectionAccessor(originalConfiguration.GetType());
 
             // Get original values.
             IConfigSystem configSystem = httpConfigurationSystem.GetField<IConfigSystem>("s_configSystem");
-            NConfigSystem decoratedSystem = new NConfigSystem(configSystem, decoratedConfigSytem);
+
+            NConfigSystemReplacement replacingSystem = new NConfigSystemReplacement(configSystem, factory, fileNames);
 
             // Substitute to decorated instances.
-            httpConfigurationSystem.SetField("s_configSystem", decoratedSystem);
-            httpConfigurationSystem.SetField("s_configRoot", decoratedSystem.Root);
+            httpConfigurationSystem.SetField("s_configSystem", replacingSystem);
+            httpConfigurationSystem.SetField("s_configRoot", replacingSystem.Root);
 
             // Clear cache, so it will be refilled with new decorated records.
             var systemWebAss = httpConfigurationSystem.AccessedType.Assembly;
@@ -64,25 +52,12 @@ namespace NConfig
                     break;
                 configPath = configPath.Substring(0, index);
             }
-
-            configManager.SetField("s_configSystem", decoratedConfigSytem);
         }
 
-        public static void SubstituteClientConfigSystem(INConfiguration newConfigSystem)
+
+        public static void SubstituteClientConfigSystem(IConfigurationFactorty factory, IList<string> fileNames)
         {
-
-            var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
-
-            if (originalConfiguration == null)
-            {
-                ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
-                originalConfiguration = configManager.GetField<IInternalConfigSystem>("s_configSystem");
-            }
-
-            NSystemDefaultConfiguration decoratedConfigSytem =
-                new NSystemDefaultConfiguration(originalConfiguration, NConfigurator.Repository, NConfigurator.MergerRegistry, newConfigSystem.FileNames);
-
-            configManager.SetField("s_configSystem", decoratedConfigSytem);
+            ReplaceConfigurationManager(factory, fileNames);
         }
 
 
@@ -94,6 +69,24 @@ namespace NConfig
                 configManager.SetField("s_configSystem", originalConfiguration);
                 originalConfiguration = null;
             }
+        }
+
+
+        private static IInternalConfigSystem ReplaceConfigurationManager(IConfigurationFactorty factory, IList<string> fileNames)
+        {
+            if (originalConfiguration != null)
+                throw new InvalidOperationException("Web system default configuration already substituted.");
+
+            var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
+
+            ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
+            originalConfiguration = configManager.GetField<IInternalConfigSystem>("s_configSystem");
+
+            NSystemReplacementConfiguration replacingConfigSytem = factory.CreateSystemReplacementConfiguration(originalConfiguration, fileNames);
+
+            configManager.SetField("s_configSystem", replacingConfigSytem);
+
+            return originalConfiguration;
         }
 
     }

@@ -45,12 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IConfigurationFactory.cs" />
+    <Compile Include="Implementation\ConfigurationFactory.cs" />
     <Compile Include="Implementation\NSectionMergerRegistry.cs" />
+    <Compile Include="Implementation\System\NConfigRecordConfiguration.cs" />
     <Compile Include="Implementation\System\ReflectionAccessor.cs" />
     <Compile Include="Implementation\System\NSystemConfigurator.cs" />
-    <Compile Include="Implementation\System\Web\NConfigSystem.cs" />
-    <Compile Include="Implementation\System\Web\NConfigRecord.cs" />
-    <Compile Include="Implementation\System\Web\NConfigRoot.cs" />
+    <Compile Include="Implementation\System\Web\NConfigSystemReplacement.cs" />
+    <Compile Include="Implementation\System\Web\NConfigRecordReplacement.cs" />
+    <Compile Include="Implementation\System\Web\NConfigRootReplacement.cs" />
     <Compile Include="INSectionMergerRegistry.cs" />
     <Compile Include="Implementation\Mergers\AppSettingsMerger.cs" />
     <Compile Include="Implementation\Mergers\ConectionStringsMerger.cs" />
@@ -63,7 +66,7 @@
     <Compile Include="Util\MemoizeExtensions.cs" />
     <Compile Include="Util\IListExtension.cs" />
     <Compile Include="Implementation\ConfigurationRepository.cs" />
-    <Compile Include="Implementation\System\NSystemDefaultConfiguration.cs" />
+    <Compile Include="Implementation\System\NSystemReplacementConfiguration.cs" />
     <Compile Include="Implementation\NConfigSettings.cs" />
     <Compile Include="IConfigurationRepository.cs" />
     <Compile Include="INConfigSettings.cs" />

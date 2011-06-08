@@ -52,6 +52,7 @@
     <Reference Include="System.Web.ApplicationServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Nest\Web.config" />
     <None Include="Service References\TestService\configuration91.svcinfo" />
     <None Include="Service References\TestService\configuration.svcinfo" />
     <None Include="Service References\TestService\Reference.svcmap">
@@ -60,6 +61,7 @@
     </None>
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="Nest\Nested.aspx" />
     <Content Include="Styles\Site.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -72,6 +74,7 @@
   <ItemGroup>
     <Content Include="WebClientSvc.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -82,6 +85,13 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Nest\Nested.aspx.cs">
+      <DependentUpon>Nested.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Nest\Nested.aspx.designer.cs">
+      <DependentUpon>Nested.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\TestService\Reference.cs">
@@ -107,7 +117,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NConfig\NConfig.csproj">
+    <ProjectReference Include="..\..\..\NConfig\NConfig.csproj">
       <Project>{0DE97382-565B-4083-AE6E-C3EA3B1AB83D}</Project>
       <Name>NConfig</Name>
     </ProjectReference>

@@ -13,6 +13,7 @@ namespace NConfig
         private static readonly INSectionMergerRegistry mergerRegistry;
         private static readonly IConfigurationRepository repository;
         private static readonly INConfigSettings settings;
+        private static readonly ConfigurationFactory configurationFactory;
         private static INConfiguration defaultConfig;
 
 
@@ -20,8 +21,9 @@ namespace NConfig
         {
             mergerRegistry = CreateSectionMerger();
             repository = CreateRepository();
-            settings = new NConfigSettings(repository);
-            defaultConfig = new NMultifileConfiguration(repository, mergerRegistry, null);
+            settings = new NConfigSettings(Repository);
+            configurationFactory = new ConfigurationFactory(Repository, MergerRegistry);
+            defaultConfig = ConfigurationFactory.CreateConfiguration(null);
         }
 
 
@@ -50,7 +52,7 @@ namespace NConfig
         /// <param name="fileName">The path of the configuration file.</param>
         public static INConfiguration UsingFile(string fileName)
         {
-            return new NMultifileConfiguration(Repository, MergerRegistry, new List<string> {settings.GetAliasedFileName(fileName), fileName});
+            return ConfigurationFactory.CreateConfiguration(new List<string> {settings.GetAliasedFileName(fileName), fileName});
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace NConfig
                 configNames.Add(name);
             }
 
-            return new NMultifileConfiguration(Repository, MergerRegistry, configNames);
+            return ConfigurationFactory.CreateConfiguration(configNames);
         }
 
         /// <summary>
@@ -111,6 +113,14 @@ namespace NConfig
             get
             {
                 return mergerRegistry;
+            }
+        }
+
+        internal static IConfigurationFactorty ConfigurationFactory
+        {
+            get
+            {
+                return configurationFactory;
             }
         }
 

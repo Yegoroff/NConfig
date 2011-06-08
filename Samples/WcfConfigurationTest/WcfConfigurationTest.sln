@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{B058216E-5F5A-4DEF-8C2F-66A175D3938A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NConfig", "..\NConfig\NConfig.csproj", "{0DE97382-565B-4083-AE6E-C3EA3B1AB83D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NConfig", "..\..\NConfig\NConfig.csproj", "{0DE97382-565B-4083-AE6E-C3EA3B1AB83D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

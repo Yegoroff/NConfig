@@ -51,6 +51,17 @@ namespace NConfig
         ConfigurationSection GetSection(string sectionName);
 
         /// <summary>
+        ///     Retrieves an untyped specified configuration section for the 
+        ///     current configuration file set.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <returns>
+        ///     The specified configuration section object, 
+        ///     or null if the section does not exist.
+        /// </returns>
+        object GetSectionUntyped(string sectionName);
+
+        /// <summary>
         ///     Gets the specified <see cref="System.Configuration.ConfigurationSectionGroup"/> object.
         /// </summary>
         /// <param name="groupName"> The path name of the <see cref="System.Configuration.ConfigurationSectionGroup"/> to return.</param>
@@ -124,9 +135,9 @@ namespace NConfig
             NConfigurator.Default = config;
             
             if (NConfigurator.Settings.IsWeb)
-                NSystemConfigurator.SubstituteWebConfigSystem(config);
+                NSystemConfigurator.SubstituteWebConfigSystem(NConfigurator.ConfigurationFactory, config.FileNames);
             else
-                NSystemConfigurator.SubstituteClientConfigSystem(config);
+                NSystemConfigurator.SubstituteClientConfigSystem(NConfigurator.ConfigurationFactory, config.FileNames);
             return config;
         }
 

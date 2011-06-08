@@ -86,7 +86,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NConfig\NConfig.csproj">
+    <ProjectReference Include="..\..\..\NConfig\NConfig.csproj">
       <Project>{0DE97382-565B-4083-AE6E-C3EA3B1AB83D}</Project>
       <Name>NConfig</Name>
     </ProjectReference>

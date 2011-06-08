@@ -1,17 +1,18 @@
 ﻿using System.Configuration.Internal;
+using System.Diagnostics;
 namespace NConfig
 {
-    internal class NConfigRecord : IInternalConfigRecord
+    internal class NConfigRecordReplacement : IInternalConfigRecord
     {
-        private readonly IInternalConfigRecord baseRecord;
+        private readonly IInternalConfigRecord originalRecord;
         private readonly INConfiguration configuration;
 
         private readonly object syncObject = new object();
         private bool isEntered;
 
-        public NConfigRecord(IInternalConfigRecord baseRecord, INConfiguration configuration)
+        public NConfigRecordReplacement(IInternalConfigRecord originalRecord, INConfiguration configuration)
         {
-            this.baseRecord = baseRecord;
+            this.originalRecord = originalRecord;
             this.configuration = configuration;
         }
 
@@ -23,7 +24,7 @@ namespace NConfig
         {
             get
             {
-                return baseRecord.ConfigPath;
+                return originalRecord.ConfigPath;
             }
         }
 
@@ -31,7 +32,7 @@ namespace NConfig
         {
             get
             {
-                return baseRecord.HasInitErrors;
+                return originalRecord.HasInitErrors;
             }
         }
 
@@ -39,14 +40,14 @@ namespace NConfig
         {
             get
             {
-                return baseRecord.StreamName;
+                return originalRecord.StreamName;
             }
         }
 
 
         public object GetLkgSection(string configKey)
         {
-            return baseRecord.GetLkgSection(configKey);
+            return originalRecord.GetLkgSection(configKey);
         }
 
         public object GetSection(string configKey)
@@ -62,10 +63,7 @@ namespace NConfig
                         try
                         {
                             isEntered = true;
-                            result = configuration.GetSection(configKey);
-
-                            if (result == null)
-                                return baseRecord.GetSection(configKey);
+                            return configuration.GetSectionUntyped(configKey);
                         }
                         finally
                         {
@@ -79,17 +77,17 @@ namespace NConfig
 
         public void RefreshSection(string configKey)
         {
-            baseRecord.RefreshSection(configKey);
+            originalRecord.RefreshSection(configKey);
         }
 
         public void Remove()
         {
-            baseRecord.Remove();
+            originalRecord.Remove();
         }
 
         public void ThrowIfInitErrors()
         {
-            baseRecord.ThrowIfInitErrors();
+            originalRecord.ThrowIfInitErrors();
         }
 
         #endregion

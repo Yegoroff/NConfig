@@ -7,6 +7,11 @@ using System.Collections.Generic;
 
 namespace NConfig
 {
+    internal class ReflectionAccessor<T>: ReflectionAccessor
+    {
+        public ReflectionAccessor(): base (typeof(T)) {}
+    }
+
     internal class ReflectionAccessor
     {
         private readonly Func<string, Func<Object, Object>> PropertyGetter;
@@ -21,11 +26,11 @@ namespace NConfig
 
         private ReflectionAccessor(Type accessedType, object instance)
         {
-            PropertyGetter = (PropertyGetter = PropertyGetterFunc).Memoize();
-            PropertySetter = (PropertySetter = PropertySetterAction).Memoize();
-            FieldGetter = (FieldGetter = FieldGetterFunc).Memoize();
-            FieldSetter = (FieldSetter = FieldSetterAction).Memoize();
-            MethodAccessor = (MethodAccessor = MethodFunc).Memoize();
+            PropertyGetter  = (PropertyGetter = PropertyGetterFunc).Memoize();
+            PropertySetter  = (PropertySetter = PropertySetterAction).Memoize();
+            FieldGetter     = (FieldGetter = FieldGetterFunc).Memoize();
+            FieldSetter     = (FieldSetter = FieldSetterAction).Memoize();
+            MethodAccessor  = (MethodAccessor = MethodFunc).Memoize();
 
             this.accessedType = accessedType;
             this.instance = instance;

@@ -45,15 +45,18 @@ namespace NConfig
         {
             object section = GetAppWebSection(sectionName);
 
-            // AppSettingsSection doesn't returned from ConfirationManager, instead returned NameValueCollection.
-            if (sectionName.Equals("appSettings", System.StringComparison.InvariantCultureIgnoreCase))
+            if (section != null)
             {
-                AppSettingsSection appSection = new AppSettingsSection();
-                var appSettings = section as NameValueCollection;
-                if (appSettings != null)
-                    for (int i = 0; i < appSettings.Count; i++)
-                        appSection.Settings.Add(appSettings.GetKey(i), appSettings[i]);
-                return appSection;
+                // AppSettingsSection doesn't returned from ConfirationManager, instead returned NameValueCollection.
+                if (sectionName.Equals("appSettings", System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    AppSettingsSection appSection = new AppSettingsSection();
+                    var appSettings = section as NameValueCollection;
+                    if (appSettings != null)
+                        for (int i = 0; i < appSettings.Count; i++)
+                            appSection.Settings.Add(appSettings.GetKey(i), appSettings[i]);
+                    return appSection;
+                }
             }
 
             return section as ConfigurationSection;
@@ -128,7 +131,7 @@ namespace NConfig
             foreach (string fileName in FileNames) // The order of files shoud be from most Important to lower
             {
                 section = GetFileSection(fileName, sectionName);
-                if (section != null && section.ElementInformation.IsPresent)
+                if (section != null && section.ElementInformation.IsPresent) // filter non-required sections.
                     sections.Add(section);
             }
            
@@ -146,6 +149,20 @@ namespace NConfig
             if (sections.Count == 1)
                 return sections[0];
             return null;
+        }
+
+        public virtual object GetSectionUntyped(string sectionName)
+        {
+            if (sectionName == "appSettings")
+                return AppSettings;
+
+            // Try to return ConfigurationSection object
+            object res = GetSection(sectionName);
+            if (res != null)
+                return res;
+
+            // Return any object returned by Default configuration system.
+            return GetAppWebSection(sectionName);
         }
 
         //TODO: Provide Configuration group section union among config files.
@@ -166,7 +183,6 @@ namespace NConfig
         }
 
         #endregion
-
     }
 
 }

@@ -15,17 +15,12 @@ namespace NConfigMvc.Controllers
     {
         public ActionResult Index()
         {
-            string[] appSettingsExpected = {"ExtendedParam", "ClientValidationEnabled", "UnobtrusiveJavaScriptEnabled", "RootParam"};
+            var appSettings = (from object s in ConfigurationManager.AppSettings select s.ToString()).ToList();
 
-            List<string> appSettings = new List<string>();
-            foreach (var s in ConfigurationManager.AppSettings)
-            {
-                appSettings.Add(s.ToString());
-            }
-
+            string[] appSettingsExpected = { "ExtendedParam", "ClientValidationEnabled", "UnobtrusiveJavaScriptEnabled", "RootParam" };
             Debug.Assert(appSettings.SequenceEqual(appSettingsExpected), "Invalid Application Settings");
 
-            ViewBag.Message = "Application Settings: " + string.Join(", ", appSettings);
+            ViewBag.Message = " Application Settings: " + string.Join(", ", appSettings);
 
             return View();
         }

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
-using System.Configuration.Internal;
-using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Configuration.Internal;
+using System.Linq;
 
 namespace NConfig
 {
@@ -18,17 +18,17 @@ namespace NConfig
 
         public static void SubstituteWebConfigSystem(IConfigurationFactorty factory, IList<string> fileNames)
         {
-            IInternalConfigSystem originalConfiguration =  ReplaceConfigurationManager(factory, fileNames);
+            IInternalConfigSystem originalConfigSystem =  ReplaceConfigurationManager(factory, fileNames);
 
             //TODO: Add ability to restore original configuration if possible.
 
             // Web Part (10 level black magic starts here)
-            var httpConfigurationSystem = new ReflectionAccessor(originalConfiguration.GetType());
+            var httpConfigurationSystem = new ReflectionAccessor(originalConfigSystem.GetType());
 
             // Get original values.
-            IConfigSystem configSystem = httpConfigurationSystem.GetField<IConfigSystem>("s_configSystem");
+            var configSystem = httpConfigurationSystem.GetField<IConfigSystem>("s_configSystem");
 
-            NConfigSystemReplacement replacingSystem = new NConfigSystemReplacement(configSystem, factory, fileNames);
+            var replacingSystem = new NConfigSystemReplacement(configSystem, factory, fileNames);
 
             // Substitute to decorated instances.
             httpConfigurationSystem.SetField("s_configSystem", replacingSystem);
@@ -41,17 +41,29 @@ namespace NConfig
             string configPath = "dmachine/webroot/" + siteId;
 
             var httpRuntime = new ReflectionAccessor(systemWebAss.GetType("System.Web.HttpRuntime"));
-            var cache = new ReflectionAccessor(httpRuntime.GetProperty("CacheInternal"));
+            var internalCache = new ReflectionAccessor(httpRuntime.GetProperty("CacheInternal"));
+            var caches = internalCache.GetField("_caches") as IEnumerable ?? Enumerable.Empty<object>();
 
-            while (true)
+            // Get all site specific configuration records keys for internal cache.
+            var configurationCacheEntries = new List<string>();
+            foreach (var cache in caches)
             {
-                cache.Execute("Remove", configPath);
-
-                int index = configPath.LastIndexOf('/');
-                if (index < 0)
-                    break;
-                configPath = configPath.Substring(0, index);
+                if (cache != null)
+                {
+                    var cacheAcessor = new ReflectionAccessor(cache);
+                    lock (cacheAcessor.GetField("_lock"))
+                    {
+                        var entries = cacheAcessor.GetField("_entries") as IEnumerable;
+                        configurationCacheEntries.AddRange(
+                            (from DictionaryEntry entry in entries
+                            select new ReflectionAccessor(entry.Key).GetProperty("Key").ToString())
+                            .Where(e => e.StartsWith(configPath))
+                            );
+                    }
+                }
             }
+            // Clear configuration records from cache.
+            configurationCacheEntries.ForEach(cacheEntry => internalCache.Execute("Remove", cacheEntry));
         }
 
 
@@ -63,19 +75,19 @@ namespace NConfig
 
         public static void RestoreInternalConfigSystem()
         {
-            if (originalConfiguration != null)
-            {
-                var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
-                configManager.SetField("s_configSystem", originalConfiguration);
-                originalConfiguration = null;
-            }
+            if (originalConfiguration == null)
+                return;
+
+            var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
+            configManager.SetField("s_configSystem", originalConfiguration);
+            originalConfiguration = null;
         }
 
 
         private static IInternalConfigSystem ReplaceConfigurationManager(IConfigurationFactorty factory, IList<string> fileNames)
         {
             if (originalConfiguration != null)
-                throw new InvalidOperationException("Web system default configuration already substituted.");
+                throw new InvalidOperationException("System default configuration already substituted.");
 
             var configManager = new ReflectionAccessor(typeof(ConfigurationManager));
 

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using System.Linq;
-using System.Configuration.Internal;
 using System.Reflection;
-using System.Collections.Generic;
 
 namespace NConfig
 {
@@ -14,6 +11,9 @@ namespace NConfig
 
     internal class ReflectionAccessor
     {
+        private const BindingFlags accessFlags =
+            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
+
         private readonly Func<string, Func<Object, Object>> PropertyGetter;
         private readonly Func<string, Action<Object, Object>> PropertySetter;
         private readonly Func<string, Func<Object, Object>> FieldGetter;
@@ -95,7 +95,7 @@ namespace NConfig
                 types = args.Select(a => a.GetType()).ToArray();
 
             var mi = AccessedType.GetMethod(name,
-                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance,
+                accessFlags,
                 null,
                 types,
                 null);
@@ -106,20 +106,20 @@ namespace NConfig
 
         private Func<object, object> FieldGetterFunc(string name)
         {
-            FieldInfo fi = AccessedType.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            FieldInfo fi = AccessedType.GetField(name, accessFlags);
             return fi.GetValue;
         }
 
         private Action<object, object> FieldSetterAction(string name)
         {
-            FieldInfo fi = AccessedType.GetField(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            FieldInfo fi = AccessedType.GetField(name, accessFlags);
             return fi.SetValue;
         }
 
 
         private Func<object,object> PropertyGetterFunc(string name)
         {
-            PropertyInfo pi = AccessedType.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            PropertyInfo pi = AccessedType.GetProperty(name, accessFlags);
             var getter = pi.GetGetMethod(true);
             if (getter != null)
                 return o => getter.Invoke(o, null);
@@ -128,10 +128,10 @@ namespace NConfig
 
         private Action<object, object> PropertySetterAction(string name)
         {
-            PropertyInfo pi = AccessedType.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            PropertyInfo pi = AccessedType.GetProperty(name, accessFlags);
             var setter = pi.GetSetMethod(true);
             if (setter != null)
-                return (i, v) => setter.Invoke(i, new Object[] {v});
+                return (i, v) => setter.Invoke(i, new[] {v});
             return null;
         }
 

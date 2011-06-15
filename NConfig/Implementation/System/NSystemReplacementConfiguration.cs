@@ -9,7 +9,6 @@ namespace NConfig
 {
     internal sealed class NSystemReplacementConfiguration : NMultifileConfiguration, IInternalConfigSystem
     {
-        private ConnectionStringsSection connectionsSection;
         private readonly IInternalConfigSystem originalConfiguration;
 
 

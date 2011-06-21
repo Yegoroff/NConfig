@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Configuration;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Configuration;
-using System.Web.WebPages.Razor.Configuration;
-using System.Web.Configuration;
-using NConfig;
-using System.Diagnostics;
 
 namespace NConfigMvc.Controllers
 {
@@ -18,9 +11,11 @@ namespace NConfigMvc.Controllers
             var appSettings = (from object s in ConfigurationManager.AppSettings select s.ToString()).ToList();
 
             string[] appSettingsExpected = { "ExtendedParam", "ClientValidationEnabled", "UnobtrusiveJavaScriptEnabled", "RootParam" };
-            Debug.Assert(appSettings.SequenceEqual(appSettingsExpected), "Invalid Application Settings");
+            
+            if (!appSettings.SequenceEqual(appSettingsExpected))
+                ViewBag.Error = "Invalid Application Settings";
 
-            ViewBag.Message = " Application Settings: " + string.Join(", ", appSettings);
+            ViewBag.Message = "Application Settings: " + string.Join(", ", appSettings);
 
             return View();
         }

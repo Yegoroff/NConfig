@@ -4,3 +4,4 @@ obj
 *.user
 _ReSharper.*
 *.docstates
+App_Data

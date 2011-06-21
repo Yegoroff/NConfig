@@ -36,10 +36,7 @@ namespace NConfigMvc
 
         protected void Application_Start()
         {
-            var ob = typeof(AspNetRequestScopeStorageProvider).Assembly.GetType("System.Web.WebPages.WebPageHttpModule").GetProperty("AppStartExecuteCompleted", BindingFlags.NonPublic | BindingFlags.Static);
-            ob.SetValue(null, true, null);
-
-            NConfigurator.UsingFile("test.config").SetAsSystemDefault();
+            NConfigurator.UsingFile(@"~\test.config").SetAsSystemDefault();
 
             AreaRegistration.RegisterAllAreas();
 

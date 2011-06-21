@@ -22,6 +22,9 @@
                  WCF Configuration Test.
             </h2>
             <p>
+                <span id="errors" runat="server" style="color:Red"></span>
+            </p>
+            <p>
                 Application Settings: <span id="applicationSettings" runat="server">NOTHING</span>
             </p>
             <p>

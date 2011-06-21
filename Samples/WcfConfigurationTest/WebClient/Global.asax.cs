@@ -18,6 +18,9 @@ namespace WebClient
         {
             NConfigurator.UsingFile("WebClientSvc.config").SetAsSystemDefault();
 
+            // Precache app settings, and check that they are not frozen in nested pages.
+            var defaultSettings = NConfigurator.Default.AppSettings;
+
             // Code that runs on application startup
         }
 

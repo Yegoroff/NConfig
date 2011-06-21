@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Linq;
 using System.IO;
 
 namespace NConfig
@@ -85,8 +84,7 @@ namespace NConfig
         public static bool DetectIsWeb()
         {
             string configFile = Path.GetFileName(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-            return configFile.Equals("web.config", StringComparison.InvariantCultureIgnoreCase);
+            return configFile != null && configFile.Equals("web.config", StringComparison.InvariantCultureIgnoreCase);
         }
-    
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 namespace NConfig
 {
     /// <summary>
-    /// Default Configuration section merger, that just return first section among provided.
+    /// Default Configuration section merger, that just returns first section among provided.
     /// </summary>
     public sealed class DefaultMerger : NSectionMerger
     {

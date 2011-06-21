@@ -1,14 +1,14 @@
 ﻿using System.Configuration.Internal;
-using System.Diagnostics;
+
 namespace NConfig
 {
+    /// <summary>
+    /// NConfig IInternalConfigRecord decorator, that adds custom configurations to web system default configuration.
+    /// </summary>
     internal class NConfigRecordReplacement : IInternalConfigRecord
     {
         private readonly IInternalConfigRecord originalRecord;
         private readonly INConfiguration configuration;
-
-        private readonly object syncObject = new object();
-        private bool isEntered;
 
         public NConfigRecordReplacement(IInternalConfigRecord originalRecord, INConfiguration configuration)
         {
@@ -52,27 +52,7 @@ namespace NConfig
 
         public object GetSection(string configKey)
         {
-            object result = null;
-
-            if (!isEntered)
-            {
-                lock (syncObject)
-                {
-                    if (!isEntered)
-                    {
-                        try
-                        {
-                            isEntered = true;
-                            return configuration.GetSectionUntyped(configKey);
-                        }
-                        finally
-                        {
-                            isEntered = false;
-                        }
-                    }
-                }
-            }
-            return result;
+            return configuration.GetSectionUntyped(configKey);
         }
 
         public void RefreshSection(string configKey)

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System;
 using System.Configuration;
 
@@ -14,7 +13,6 @@ namespace NConfig
         private static readonly IConfigurationRepository repository;
         private static readonly INConfigSettings settings;
         private static readonly ConfigurationFactory configurationFactory;
-        private static INConfiguration defaultConfig;
 
 
         static NConfigurator()
@@ -23,27 +21,15 @@ namespace NConfig
             repository = CreateRepository();
             settings = new NConfigSettings(Repository);
             configurationFactory = new ConfigurationFactory(Repository, MergerRegistry);
-            defaultConfig = ConfigurationFactory.CreateConfiguration(null);
+            Default = ConfigurationFactory.CreateConfiguration(null);
         }
-
-
 
 
         /// <summary>
         /// Gets the current application's default configuration.
         /// </summary>
         /// <value>The current application's default configuration.</value>
-        public static INConfiguration Default
-        {
-            get
-            {
-                return defaultConfig;
-            }
-            internal set
-            {
-                defaultConfig = value;
-            }
-        }
+        public static INConfiguration Default { get; internal set; }
 
 
         /// <summary>
@@ -137,8 +123,8 @@ namespace NConfig
         {
             if (NConfigSettings.DetectIsWeb())
                 return new ConfigurationRepositoryWeb();
-            else
-                return new ConfigurationRepository();
+
+            return new ConfigurationRepository();
         }
 
         private static NSectionMergerRegistry CreateSectionMerger()

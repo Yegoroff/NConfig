@@ -18,7 +18,7 @@ namespace NConfig
 
         public static void SubstituteWebConfigSystem(IConfigurationFactorty factory, IList<string> fileNames)
         {
-            IInternalConfigSystem originalConfigSystem =  ReplaceConfigurationManager(factory, fileNames);
+            IInternalConfigSystem originalConfigSystem = ReplaceConfigurationManager(factory, fileNames);
 
             //TODO: Add ability to restore original configuration if possible.
 

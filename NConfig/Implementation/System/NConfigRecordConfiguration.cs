@@ -14,6 +14,7 @@ namespace NConfig
             this.configRecord = configRecord;
         }
 
+
         protected override object GetAppWebSection(string sectionName)
         {
             return configRecord.GetSection(sectionName);

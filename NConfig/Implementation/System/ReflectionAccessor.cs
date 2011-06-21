@@ -107,13 +107,19 @@ namespace NConfig
         private Func<object, object> FieldGetterFunc(string name)
         {
             FieldInfo fi = AccessedType.GetField(name, accessFlags);
-            return fi.GetValue;
+
+            if (fi != null)
+                return fi.GetValue;
+            return null;
         }
 
         private Action<object, object> FieldSetterAction(string name)
         {
             FieldInfo fi = AccessedType.GetField(name, accessFlags);
-            return fi.SetValue;
+
+            if (fi != null)
+                return fi.SetValue;
+            return null;
         }
 
 

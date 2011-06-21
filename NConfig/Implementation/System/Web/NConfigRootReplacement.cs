@@ -20,7 +20,7 @@ namespace NConfig
 
         private IInternalConfigRecord CreateConfigRecord(IInternalConfigRecord originalRecord)
         {
-            //TODO: Consider memoization like IInternalConfigRecord -> NConfigRecord.(Threadsafe)
+            //TODO: Consider caching like IInternalConfigRecord -> NConfigRecord.(Threadsafe)
             INConfiguration recordConfiguration = factory.CreateConfigRecordConfiguration(originalRecord, fileNames);
             return new NConfigRecordReplacement(originalRecord, recordConfiguration);
         }
@@ -28,7 +28,7 @@ namespace NConfig
         #region IInternalConfigRoot Members
 
         /// <summary>
-        /// We do not provide correct event decoration, when we need to took all the subscribers and 
+        /// We do not provide correct event decoration, when we must take all the subscribers and 
         /// resubscribe on our event instances, thus we provide corect instance in event args.
         /// Currently all noticed subscribers in FCL do not use args or sender, so we just notify them that something changed.
         /// </summary>
@@ -52,7 +52,7 @@ namespace NConfig
             }
             remove
             {
-                originalRoot.ConfigRemoved += value;
+                originalRoot.ConfigRemoved -= value;
             }
         }
 
@@ -95,7 +95,7 @@ namespace NConfig
 
         public void RemoveConfig(string configPath)
         {
-            //TODO: This could affect memoization.
+            //TODO: This could affect cache.
             originalRoot.RemoveConfig(configPath);
         }
 

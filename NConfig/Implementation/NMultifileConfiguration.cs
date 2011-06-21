@@ -10,10 +10,6 @@ namespace NConfig
         private readonly INSectionMergerRegistry mergerRegistry;
         private readonly IList<string> fileNames;
 
-        // Property memorization.
-        private ConnectionStringSettingsCollection connectionStrings;
-        private NameValueCollection appSettings;
-
 
         internal NMultifileConfiguration(IConfigurationRepository repository, 
             INSectionMergerRegistry mergerRegistry, IList<string> fileNames)
@@ -48,17 +44,16 @@ namespace NConfig
             if (section != null)
             {
                 // AppSettingsSection doesn't returned from ConfirationManager, instead returned NameValueCollection.
-                if (sectionName.Equals("appSettings", System.StringComparison.InvariantCultureIgnoreCase))
+                if (IsAppSettingsSection(sectionName))
                 {
-                    AppSettingsSection appSection = new AppSettingsSection();
-                    var appSettings = section as NameValueCollection;
-                    if (appSettings != null)
-                        for (int i = 0; i < appSettings.Count; i++)
-                            appSection.Settings.Add(appSettings.GetKey(i), appSettings[i]);
+                    var appSection = new AppSettingsSection();
+                    var appSettingsCollection = section as NameValueCollection;
+                    if (appSettingsCollection != null)
+                        for (int i = 0; i < appSettingsCollection.Count; i++)
+                            appSection.Settings.Add(appSettingsCollection.GetKey(i), appSettingsCollection[i]);
                     return appSection;
                 }
             }
-
             return section as ConfigurationSection;
         }
 
@@ -76,21 +71,29 @@ namespace NConfig
         private ConnectionStringSettingsCollection GetConnectionStrings()
         {
             var result = new ConnectionStringSettingsCollection();
-            ConnectionStringsSection section = GetSection("connectionStrings") as ConnectionStringsSection;
-            foreach (ConnectionStringSettings settings in section.ConnectionStrings)
-                result.Add(settings);
+            var section = GetSection("connectionStrings") as ConnectionStringsSection;
+            if (section != null)
+            {
+                foreach (ConnectionStringSettings settings in section.ConnectionStrings)
+                    result.Add(settings);
+            }
             return result;
         }
 
         private NameValueCollection GetAppSettings()
         {
             var result = new NameValueCollection();
-            AppSettingsSection appSection = GetSection("appSettings") as AppSettingsSection;
+            var appSection = GetSection("appSettings") as AppSettingsSection;
             if (appSection != null)
                 foreach (KeyValueConfigurationElement element in appSection.Settings)
                     result.Add(element.Key, element.Value);
 
             return result;
+        }
+
+        private static bool IsAppSettingsSection(string sectionName)
+        {
+            return sectionName.Equals("appSettings", System.StringComparison.InvariantCultureIgnoreCase);
         }
 
 
@@ -105,9 +108,9 @@ namespace NConfig
         {
             get
             {
-                if (connectionStrings == null)
-                    connectionStrings = GetConnectionStrings();
-                return connectionStrings;
+                // This property couldn't be caced, because of possible changes to app settings
+                // and nested configuration files on web
+                return GetConnectionStrings();
             }
         }
 
@@ -115,16 +118,16 @@ namespace NConfig
         {
             get
             {
-                if (appSettings == null)
-                    appSettings = GetAppSettings();
-                return appSettings;
+                // This property couldn't be caced, because of possible changes to app settings
+                // and nested configuration files on webs
+                return GetAppSettings();
             }
         }
 
 
         public ConfigurationSection GetSection(string sectionName)
         {
-            List<ConfigurationSection> sections = new List<ConfigurationSection>();
+            var sections = new List<ConfigurationSection>();
             
             // Read section from custom configuration files.
             ConfigurationSection section;
@@ -148,12 +151,13 @@ namespace NConfig
 
             if (sections.Count == 1)
                 return sections[0];
+
             return null;
         }
 
         public virtual object GetSectionUntyped(string sectionName)
         {
-            if (sectionName == "appSettings")
+            if (IsAppSettingsSection(sectionName))
                 return AppSettings;
 
             // Try to return ConfigurationSection object

@@ -10,7 +10,7 @@ namespace NConfig
     [ConfigurationCollection(typeof(HostMappingConfigurationCollection))]
     public class HostMappingConfigurationCollection : ConfigurationElementCollection
     {
-        private static ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+        private static readonly ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
 
 
         /// <summary>

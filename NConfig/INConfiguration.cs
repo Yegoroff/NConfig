@@ -1,6 +1,5 @@
 ﻿using System.Configuration;
 using System.Collections.Generic;
-using System.Configuration.Internal;
 using System.Collections.Specialized;
 
 namespace NConfig

@@ -8,12 +8,12 @@ namespace NConfig
     /// </summary>
     public class HostMappingConfigurationElement : ConfigurationElement
     {
-        private static ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+        private static readonly ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
         private static readonly ConfigurationProperty propHost = new ConfigurationProperty("host", typeof(string), string.Empty, ConfigurationPropertyOptions.IsKey | ConfigurationPropertyOptions.IsRequired);
         private static readonly ConfigurationProperty propAlias = new ConfigurationProperty("alias", typeof(string), string.Empty, ConfigurationPropertyOptions.None);
 
-        private string initHost;
-        private string initAlias;
+        private readonly string initHost;
+        private readonly string initAlias;
         private bool needsInit;
 
 

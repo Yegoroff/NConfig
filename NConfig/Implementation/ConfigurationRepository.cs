@@ -8,7 +8,7 @@ namespace NConfig
     internal class ConfigurationRepository : IConfigurationRepository
     {
         private readonly Dictionary<string, Configuration> configCache = new Dictionary<string, Configuration>();
-        private static string rootPath = GetRootPath();
+        private static readonly string rootPath = GetRootPath();
 
         public Configuration GetFileConfiguration(string fileName)
         {
@@ -22,10 +22,9 @@ namespace NConfig
                 Configuration result;
                 if (!configCache.TryGetValue(filePath, out result))
                 {
-                    ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap() { ExeConfigFilename = filePath };
+                    var fileMap = new ExeConfigurationFileMap { ExeConfigFilename = filePath };
                     result = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-                    if (result != null)
-                        configCache.Add(filePath, result);
+                    configCache.Add(filePath, result);
                 }
                 return result;
             }

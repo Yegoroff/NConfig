@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 
 namespace NConfig
@@ -12,7 +11,7 @@ namespace NConfig
 
             var mem = new Dictionary<TArg1, Dictionary<TArg2, TResult>>();
 
-            return (TArg1 a1, TArg2 a2) =>
+            return (a1, a2) =>
             {
                 Dictionary<TArg2, TResult> dict;
                 if (!mem.TryGetValue(a1, out dict)) {
@@ -33,7 +32,7 @@ namespace NConfig
         {
             var mem = new Dictionary<TArg, TResult>();
 
-            return (TArg a) =>
+            return a =>
             {
                 TResult value;
                 if (!mem.TryGetValue(a, out value))

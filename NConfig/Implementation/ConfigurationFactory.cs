@@ -3,7 +3,7 @@ using System.Configuration.Internal;
 
 namespace NConfig
 {
-    internal class ConfigurationFactory : IConfigurationFactorty
+    internal class ConfigurationFactory : IConfigurationFactory
     {
 
         public ConfigurationFactory(IConfigurationRepository configurationRepository, INSectionMergerRegistry mergerRegistry)

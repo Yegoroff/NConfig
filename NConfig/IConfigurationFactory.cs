@@ -3,7 +3,7 @@ using System.Configuration.Internal;
 
 namespace NConfig
 {
-    internal interface IConfigurationFactorty
+    internal interface IConfigurationFactory
     {
         INSectionMergerRegistry MergerRegistry { get; }
 

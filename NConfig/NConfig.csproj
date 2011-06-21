@@ -45,9 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INSystemConfigurator.cs" />
     <Compile Include="IConfigurationFactory.cs" />
     <Compile Include="Implementation\ConfigurationFactory.cs" />
     <Compile Include="Implementation\NSectionMergerRegistry.cs" />
+    <Compile Include="Implementation\System\Web\NWebSystemConfigurator.cs" />
     <Compile Include="Implementation\System\NConfigRecordConfiguration.cs" />
     <Compile Include="Implementation\System\ReflectionAccessor.cs" />
     <Compile Include="Implementation\System\NSystemConfigurator.cs" />

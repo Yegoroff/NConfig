@@ -10,7 +10,7 @@ namespace NConfig
         private readonly NConfigRootReplacement replacedRoot;        
 
 
-        public NConfigSystemReplacement(IConfigSystem originalConfigSystem, IConfigurationFactorty factory, IList<string> fileNames)
+        public NConfigSystemReplacement(IConfigSystem originalConfigSystem, IConfigurationFactory factory, IList<string> fileNames)
         {
             this.originalConfigSystem = originalConfigSystem;
             replacedRoot = new NConfigRootReplacement(originalConfigSystem.Root, factory, fileNames);

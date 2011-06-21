@@ -121,7 +121,7 @@ namespace NConfig
         /// </summary>
         public static INConfiguration SetAsDefault(this INConfiguration config)
         {
-            NConfigurator.Default = config;
+            NConfigurator.SetDefaultConfiguration(config);
             return config;
         }
 
@@ -131,12 +131,7 @@ namespace NConfig
         /// </summary>
         public static INConfiguration SetAsSystemDefault(this INConfiguration config)
         {
-            NConfigurator.Default = config;
-            
-            if (NConfigurator.Settings.IsWeb)
-                NSystemConfigurator.SubstituteWebConfigSystem(NConfigurator.ConfigurationFactory, config.FileNames);
-            else
-                NSystemConfigurator.SubstituteClientConfigSystem(NConfigurator.ConfigurationFactory, config.FileNames);
+            NConfigurator.SubstituteSystemConfiguration(config);
             return config;
         }
 

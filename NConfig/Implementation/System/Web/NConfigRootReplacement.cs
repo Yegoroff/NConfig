@@ -6,11 +6,11 @@ namespace NConfig
     internal class NConfigRootReplacement : IInternalConfigRoot
     {
         private readonly IInternalConfigRoot originalRoot;
-        private readonly IConfigurationFactorty factory;
+        private readonly IConfigurationFactory factory;
         private readonly IList<string> fileNames;
         
 
-        public NConfigRootReplacement(IInternalConfigRoot originalRoot, IConfigurationFactorty factory, IList<string> fileNames)
+        public NConfigRootReplacement(IInternalConfigRoot originalRoot, IConfigurationFactory factory, IList<string> fileNames)
         {
             this.originalRoot = originalRoot;
             this.factory = factory;
@@ -18,7 +18,7 @@ namespace NConfig
         }
 
 
-        private IInternalConfigRecord CreateConfigRecord(IInternalConfigRecord originalRecord)
+        public IInternalConfigRecord CreateConfigRecord(IInternalConfigRecord originalRecord)
         {
             //TODO: Consider caching like IInternalConfigRecord -> NConfigRecord.(Threadsafe)
             INConfiguration recordConfiguration = factory.CreateConfigRecordConfiguration(originalRecord, fileNames);

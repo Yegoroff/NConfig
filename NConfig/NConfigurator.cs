@@ -12,7 +12,8 @@ namespace NConfig
         private static readonly INSectionMergerRegistry mergerRegistry;
         private static readonly IConfigurationRepository repository;
         private static readonly INConfigSettings settings;
-        private static readonly ConfigurationFactory configurationFactory;
+        private static readonly IConfigurationFactory configurationFactory;
+        private static readonly INSystemConfigurator systemConfigurator;
 
 
         static NConfigurator()
@@ -22,6 +23,7 @@ namespace NConfig
             settings = new NConfigSettings(Repository);
             configurationFactory = new ConfigurationFactory(Repository, MergerRegistry);
             Default = ConfigurationFactory.CreateConfiguration(null);
+            systemConfigurator = CreateSystemConfigurator();
         }
 
 
@@ -29,7 +31,7 @@ namespace NConfig
         /// Gets the current application's default configuration.
         /// </summary>
         /// <value>The current application's default configuration.</value>
-        public static INConfiguration Default { get; internal set; }
+        public static INConfiguration Default { get; private set; }
 
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace NConfig
         /// </summary>
         public static void RestoreSystemDefaults()
         {
-            NSystemConfigurator.RestoreInternalConfigSystem();
+            SystemConfigurator.RestoreSystemConfiguration();
         }
 
         /// <summary>
@@ -102,7 +104,7 @@ namespace NConfig
             }
         }
 
-        internal static IConfigurationFactorty ConfigurationFactory
+        internal static IConfigurationFactory ConfigurationFactory
         {
             get
             {
@@ -116,6 +118,26 @@ namespace NConfig
             {
                 return settings;
             }
+        }
+
+        internal static  INSystemConfigurator SystemConfigurator
+        {
+            get
+            {
+                return systemConfigurator;
+            }
+        }
+
+
+        internal static void SetDefaultConfiguration(INConfiguration config)
+        {
+            Default = config;
+        }
+
+        internal static void SubstituteSystemConfiguration(INConfiguration config)
+        {
+            SetDefaultConfiguration(config);
+            SystemConfigurator.SubstituteSystemConfiguration(NConfigurator.ConfigurationFactory, config.FileNames);            
         }
 
 
@@ -134,6 +156,16 @@ namespace NConfig
             result.AddMerger(typeof(ConnectionStringsSection), new ConnectionStringsMerger());
             return result;
         }
+
+        private static INSystemConfigurator CreateSystemConfigurator()
+        {
+            if (NConfigSettings.DetectIsWeb())
+                return new NWebSystemConfigurator();
+
+            return new NSystemConfigurator();
+
+        }
+
     }
 }
 

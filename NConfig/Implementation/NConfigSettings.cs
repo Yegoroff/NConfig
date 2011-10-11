@@ -16,8 +16,8 @@ namespace NConfig
         public NConfigSettings(IConfigurationRepository repository)
         {
             this.repository = repository;
-            hostAlias = DetectHostAlias();
             isWeb = DetectIsWeb();
+            hostAlias = DetectHostAlias();
         }
 
 
@@ -58,7 +58,8 @@ namespace NConfig
             string hostName = Environment.MachineName;
             HostMapSection hostMapSection = null;
 
-            Configuration hostConfig = repository.GetFileConfiguration(HostMapFile);
+            var hostMapFilename = IsWeb ? @"~/" + HostMapFile : HostMapFile;
+            Configuration hostConfig = repository.GetFileConfiguration(hostMapFilename);
             if (hostConfig != null)
                 hostMapSection = hostConfig.GetSection<HostMapSection>("hostMap");
 

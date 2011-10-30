@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.IO;
+using System.Web;
 
 namespace NConfig
 {
@@ -11,6 +12,10 @@ namespace NConfig
 
         protected override string ToAbsolutePath(string path)
         {
+            // Check if file path is full physical local path.
+            if (Path.GetFullPath(path) == path) 
+                return path;
+
             if (!VirtualPathUtility.IsAbsolute(path) && !VirtualPathUtility.IsAppRelative(path))
                 path = VirtualPathUtility.ToAppRelative("\\" + path);
 

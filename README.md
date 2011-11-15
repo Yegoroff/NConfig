@@ -17,10 +17,10 @@ The easiest way to build NConfig from source is to clone the git repository on G
 The solution file `NConfig.sln` is located in the root of the repo.
 
 ### NuGet support
-Currently NConfig is not published on NuGet official package source but I'm working on it.
+You can find **NConfig** in NuGet Gallery or just install it using VS *NuGet Packages Manager*
 
-However you can create NuGet package and put it to your local NuGet hive.
-To do this please run NuGet.bat, package will be put to NuGet subfolder.
+Also you can create NuGet package and put it to your local NuGet hive.
+To do this please run NuGet.bat, newly created package will be put to NuGet subfolder.
 
 ### Examples
 To enable NConfig in your code, you need only one code line in your application startup section:

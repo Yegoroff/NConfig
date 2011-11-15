@@ -68,7 +68,7 @@ namespace NConfig
         }
 
         /// <summary>
-        /// Registers the section merger for speicfied section type.
+        /// Registers the section merger for specified section type.
         /// </summary>
         /// <param name="sectionType">Type of the section.</param>
         /// <param name="merger">The section merger instance.</param>
@@ -78,7 +78,17 @@ namespace NConfig
         }
 
         /// <summary>
-        /// Registers the section merger for speicfied section type.
+        /// Registers the section merger for specified section type.
+        /// </summary>
+        /// <typeparam name="TSectionType">The type of the section.</typeparam>
+        /// <param name="merger">The section merger instance.</param>
+        public static void RegisterSectionMerger<TSectionType>(NSectionMerger<TSectionType> merger) where TSectionType : ConfigurationSection
+        {
+            RegisterSectionMerger(typeof(TSectionType), merger);
+        }
+
+        /// <summary>
+        /// Registers the section merger for specified section type.
         /// </summary>
         /// <typeparam name="TSectionType">The type of the section.</typeparam>
         /// <param name="merger">The section merger instance.</param>

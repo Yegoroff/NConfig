@@ -145,10 +145,10 @@ namespace NConfig.Tests
 
             try
             {
-                NConfigurator.RegisterSectionMerger<TestSection>(mergerStub);
+                NConfigurator.RegisterSectionMerger(mergerStub);
                 var testSection = NConfigurator.UsingFiles("Configs\\Aliased.config", "Configs\\NConfigTest.config").GetSection<TestSection>();
 
-                //Conactenated values should be concatenated in order: from the most important section to lower.
+                //Concatenated values should be concatenated in order: from the most important section to lower.
                 Assert.That(testSection.Value, Is.EqualTo("Tests.AliasedAliased"));
             }
             finally

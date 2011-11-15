@@ -1,6 +1,7 @@
 NConfig
 =======
 NConfig is a .Net library that allows using multi-file, host-based configurations in .Net
+
 This is thing you are really missing during staged deployments and with developer dependent environments.
 
 ### License
@@ -26,13 +27,18 @@ To enable NConfig in your code, you need only one code line in your application 
 
 `NConfigurator.UsingFiles("Config\\Custom.config", "Config\\Connections.config").SetAsSystemDefault();`
 
-As result configurations from files {HostName}.Custom.config and {HostName}.Connections.config in Config subfolder will be merged and used in ConfigurationManager instead of default configuration.
-Where {HostName} is the current machine name. 
-In case {HostName}.Custom.config do not exist, Custom.config file will be used. Moreover if Custom.config is missing too, App.config (or Web.config) will be used.
+As result configurations from files *{HostName}.Custom.config* and *{HostName}.Connections.config* in *Config* subfolder will be merged and used in ConfigurationManager instead of default configuration.
+
+Where **{HostName}** is the current machine name.
+
+In case *{HostName}.Custom.config* do not exist, *Custom.config* file will be used. Moreover if *Custom.config* is missing too, App.config (or Web.config) will be used.
 
 #### Sample code from Samples\ConsoleTest:
 ```csharp
 	// Setup NConfigurator to use Custom.config file from Config subfolder.
+	NConfigurator.UsingFile(@"Config\Custom.config").SetAsSystemDefault();
+
+
 	var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
 
 	var configManagerTestSection = ConfigurationManager.GetSection("TestConfigSection") as TestConfigSection;

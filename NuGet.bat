@@ -1,7 +1,7 @@
 @set DEVENV100="%programfiles(x86)%\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe"
 @if "%programfiles(x86)%"=="" (@set DEVENV100="%programfiles%\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe")
 
-@set NUGET="Lib\NuGet.CommandLine.1.2.20216.59\Tools\NuGet.exe"
+@set NUGET="Lib\NuGet.CommandLine.1.5.21005.9019\tools\NuGet.exe"
 
 @echo ==========================
 @echo Building NConfig.
@@ -20,7 +20,7 @@ xcopy bin\Release NuGet\lib /s /y
 :nuget
 @echo ==========================
 @echo NuGet package creation.
-@%NUGET% pack NuGet\nconfig.nuspec -b NuGet -o NuGet
+@%NUGET% pack NuGet\nconfig.nuspec -basePath NuGet -o NuGet
 @if not errorlevel 0 goto error
 
 @echo NConfig build sucessfull.

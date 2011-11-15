@@ -3,8 +3,24 @@
 
 }
 
-<h3 style="color:Red">@ViewBag.Error</h3>
-<h3>@ViewBag.Message</h3>
-<p>
-    To learn more about ASP.NET MVC visit <a href="http://asp.net/mvc" title="ASP.NET MVC Website">http://asp.net/mvc</a>.
-</p>
+
+<h3>NConfig Default TestConfigSection value: </h3>
+<p>@ViewBag.NConfigDefault</p>
+
+<h3>ConfigurationManager TestConfigSection value: </h3>
+<p>@ViewBag.ConfigurationManager</p>
+            
+<h3>NConfig NamedSection value : </h3>
+<p>@ViewBag.NConfigNamed</p>
+
+<h3>Merged App Settings : </h3>
+@foreach (var setting in ViewBag.AppSettings)
+{
+    <p>@setting</p>
+}
+
+<h3>Merged Connection Strings: </h3>
+@foreach (var connectionString in ViewBag.ConnectionStrings)
+{
+    <p>@connectionString</p>
+}

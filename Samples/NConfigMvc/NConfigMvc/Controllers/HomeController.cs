@@ -1,6 +1,9 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
+using NConfig;
 
 namespace NConfigMvc.Controllers
 {
@@ -8,21 +11,39 @@ namespace NConfigMvc.Controllers
     {
         public ActionResult Index()
         {
-            var appSettings = (from object s in ConfigurationManager.AppSettings select s.ToString()).ToList();
 
-            string[] appSettingsExpected = { "ExtendedParam", "ClientValidationEnabled", "UnobtrusiveJavaScriptEnabled", "RootParam" };
+            var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
+
+            var configManagerTestSection = ConfigurationManager.GetSection("TestConfigSection") as TestConfigSection;
             
-            if (!appSettings.SequenceEqual(appSettingsExpected))
-                ViewBag.Error = "Invalid Application Settings";
+            var namedTestSection = NConfigurator.UsingFile(@"Config\Custom.config").GetSection<TestConfigSection>("NamedSection");
 
-            ViewBag.Message = "Application Settings: " + string.Join(", ", appSettings);
+            ViewBag.NConfigDefault = testSection.TestValue;
+            ViewBag.ConfigurationManager = configManagerTestSection.TestValue;
+            ViewBag.NConfigNamed = namedTestSection.TestValue;
 
-            return View();
-        }
+            ViewBag.AppSettings = new List<string>(); 
+            foreach (var key in ConfigurationManager.AppSettings.AllKeys)
+            {
+                ViewBag.AppSettings.Add(key + " : " + ConfigurationManager.AppSettings[key]);
+            }
 
-        public ActionResult About()
-        {
+            ViewBag.ConnectionStrings = new List<string>(); 
+            foreach (ConnectionStringSettings connectionString in ConfigurationManager.ConnectionStrings)
+            {
+                ViewBag.ConnectionStrings.Add(connectionString.Name + " : " + connectionString.ConnectionString);
+            }
+
             return View();
         }
     }
+
+    static class StringExtensions
+    {
+        public static string F(this string format, params object[] args)
+        {
+            return string.Format(format, args);
+        }
+    }
+
 }

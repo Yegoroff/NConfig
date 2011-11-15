@@ -36,7 +36,7 @@ namespace NConfigMvc
 
         protected void Application_Start()
         {
-            NConfigurator.UsingFile(@"~\test.config").SetAsSystemDefault();
+            NConfigurator.UsingFile(@"~\Config\Custom.config").SetAsSystemDefault();
 
             AreaRegistration.RegisterAllAreas();
 

@@ -6,7 +6,7 @@
     <authors>Alexander Yegorov</authors>
     <projectUrl>https://github.com/Yegoroff/NConfig</projectUrl>
     <description>NConfig is a small library that allows using multi-file, host-based configurations in .Net</description>
-    <tags>config, configuration, nconfig</tags>
+    <tags>config configuration nconfig</tags>
     <frameworkAssemblies>
         <frameworkAssembly assemblyName="System.Configuration"/>
     </frameworkAssemblies>

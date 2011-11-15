@@ -10,7 +10,9 @@ Please inform me if anyone is aware of any license violations that this code may
 
 ### Building
 The easiest way to build NConfig from source is to clone the git repository on GitHub and build the NConfig solution.
+
 `git clone git://github.com/Yegoroff/NConfig.git`
+
 The solution file `NConfig.sln` is located in the root of the repo.
 
 ### NuGet support
@@ -24,12 +26,12 @@ To enable NConfig in your code, you need only one code line in your application 
 
 `NConfigurator.UsingFiles("Config\\Custom.config", "Config\\Connections.config").SetAsSystemDefault();`
 
-As result configurations from files <HostName>.Custom.config and <HostName>.Connections.config in Config subfolder will be merged and used in ConfigurationManager instead of default configuration.
-Where <HostName> is the current machine name. 
-In case <HostName>.Custom.config do not exist, Custom.config file will be used. Moreover if Custom.config is missing too, App.config (or Web.config) will be used.
+As result configurations from files {HostName}.Custom.config and {HostName}.Connections.config in Config subfolder will be merged and used in ConfigurationManager instead of default configuration.
+Where {HostName} is the current machine name. 
+In case {HostName}.Custom.config do not exist, Custom.config file will be used. Moreover if Custom.config is missing too, App.config (or Web.config) will be used.
 
 #### Sample code from Samples\ConsoleTest:
-<pre>
+```csharp
 	// Setup NConfigurator to use Custom.config file from Config subfolder.
 	var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
 
@@ -46,7 +48,7 @@ In case <HostName>.Custom.config do not exist, Custom.config file will be used. 
 	{
 		Console.WriteLine(key + " : " +  ConfigurationManager.AppSettings[key]);
 	}
-</pre>
+```
 
 For more complex examples please refer to Samples subfolder.
 

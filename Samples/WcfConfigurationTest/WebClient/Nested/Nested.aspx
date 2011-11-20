@@ -21,15 +21,21 @@
             <h2>
                  WCF Configuration Test.
             </h2>
-            <p>
-                <span id="errors" runat="server" style="color:Red"></span>
-            </p>
-            <p>
-                Application Settings: <span id="applicationSettings" runat="server">NOTHING</span>
-            </p>
-            <p>
-                Connection Strings: <span id="connectionStrings" runat="server">NOTHING</span>
-            </p>
+
+            <h3>NConfig Default TestConfigSection value: </h3>
+            <p id="NConfigDefault" runat="server"></p>
+            
+            <h3>ConfigurationManager TestConfigSection value: </h3>
+            <p id="ConfigManager" runat="server"></p>
+            
+            <h3>NConfig NamedSection value : </h3>
+            <p id="NConfigNamed" runat="server"></p>
+
+            <h3>Merged App Settings : </h3>
+            <div id="AppSettings" runat="server" />
+
+            <h3>Merged Connection Strings: </h3>
+            <div id="ConnectionStrings"  runat="server" />
 
         </div>
     </div>

@@ -12,7 +12,7 @@ namespace Client
         {
             NConfigurator.UsingFile("ClientSvc.config").SetAsSystemDefault();
 
-            Thread.Sleep(1000); // this will get WCF service app some fora to run
+            Thread.Sleep(1000); // this will get WCF service app some fora to run.
             Run("WsHttpSimple");
 
             Console.ReadLine();
@@ -23,9 +23,11 @@ namespace Client
             Console.WriteLine("Press enter to invoke PrintMessage operation on the service with " + endpointConfigurationName + " endpoint configuration");
             Console.ReadLine();
 
-            ChannelFactory<ISimpleService> factory =  new ChannelFactory<ISimpleService>(endpointConfigurationName);
+            var factory =  new ChannelFactory<ISimpleService>(endpointConfigurationName);
             ISimpleService proxy = factory.CreateChannel();
+
             proxy.PrintMessage("Calling form Console Client.");
+
             ((ICommunicationObject)proxy).Close();
         }
     }

@@ -22,30 +22,48 @@ namespace WebClient.Nest {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// errors control.
+        /// NConfigDefault control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl errors;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl NConfigDefault;
         
         /// <summary>
-        /// applicationSettings control.
+        /// ConfigManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl applicationSettings;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ConfigManager;
         
         /// <summary>
-        /// connectionStrings control.
+        /// NConfigNamed control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl connectionStrings;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl NConfigNamed;
+        
+        /// <summary>
+        /// AppSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl AppSettings;
+        
+        /// <summary>
+        /// ConnectionStrings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ConnectionStrings;
     }
 }

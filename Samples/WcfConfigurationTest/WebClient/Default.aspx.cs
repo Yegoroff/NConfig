@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using WebClient.TestService;
-using System.Threading;
 using System.ServiceModel.Configuration;
-using System.Reflection;
-using System.Configuration;
+using System.Threading;
+using System.Web;
+using WebClient.TestService;
 
 namespace WebClient
 {
@@ -16,14 +10,16 @@ namespace WebClient
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Give time to ServiceHost to initialize.
             Thread.Sleep(1500);
 
+            // Read configuation section and print wcf service host url to page.
+            var wcfClientSection = HttpContext.Current.GetSection("system.serviceModel/client") as ClientSection;
+            if (wcfClientSection.Endpoints.Count > 0)
+                endpointAddress.InnerText = wcfClientSection.Endpoints[0].Address.AbsoluteUri;
 
-            ClientSection cs = HttpContext.Current.GetSection("system.serviceModel/client") as ClientSection;
-            if (cs.Endpoints.Count > 0)
-                endpointAddress.InnerText = cs.Endpoints[0].Address.AbsoluteUri;
 
-
+            // Send message to wcf service host.
             ISimpleService client = new SimpleServiceClient();
             client.PrintMessage("Calling from Web Client.");
         }

@@ -52,7 +52,23 @@
     <Reference Include="System.Web.ApplicationServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Nest\Web.config" />
+    <Content Include="Nested\Web.config" />
+    <Content Include="Config\Custom.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Any.Custom.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Personal.Custom.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HostMap.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Service References\TestService\configuration91.svcinfo" />
     <None Include="Service References\TestService\configuration.svcinfo" />
     <None Include="Service References\TestService\Reference.svcmap">
@@ -61,7 +77,7 @@
     </None>
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
-    <Content Include="Nest\Nested.aspx" />
+    <Content Include="Nested\Nested.aspx" />
     <Content Include="Styles\Site.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -72,7 +88,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebClientSvc.config">
+    <Compile Include="TestConfigSection.cs" />
+    <Content Include="Config\WebClientSvc.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
@@ -86,11 +103,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Nest\Nested.aspx.cs">
+    <Compile Include="Nested\Nested.aspx.cs">
       <DependentUpon>Nested.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Nest\Nested.aspx.designer.cs">
+    <Compile Include="Nested\Nested.aspx.designer.cs">
       <DependentUpon>Nested.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

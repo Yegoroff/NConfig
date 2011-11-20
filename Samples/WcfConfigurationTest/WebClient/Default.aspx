@@ -28,7 +28,7 @@
                 WCF service endpoint address: <span id="endpointAddress" runat="server"></span>
             </p>
 
-            <a href="Nest/nested.aspx">Nested Page</a>
+            <a href="Nested/nested.aspx">Nested Page</a>
         </div>
     </div>
     </form>

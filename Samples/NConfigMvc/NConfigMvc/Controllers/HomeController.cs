@@ -15,7 +15,7 @@ namespace NConfigMvc.Controllers
             var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
 
             var configManagerTestSection = ConfigurationManager.GetSection("TestConfigSection") as TestConfigSection;
-            
+
             var namedTestSection = NConfigurator.UsingFile(@"Config\Custom.config").GetSection<TestConfigSection>("NamedSection");
 
             ViewBag.NConfigDefault = testSection.TestValue;

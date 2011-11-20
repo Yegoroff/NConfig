@@ -42,9 +42,9 @@ In case *{HostName}.Custom.config* do not exist, *Custom.config* file will be us
 	NConfigurator.UsingFile(@"Config\Custom.config").SetAsSystemDefault();
 
 
-	var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
+        var configManagerTestSection = ConfigurationManager.GetSection("TestConfigSection") as TestConfigSection;
 
-	var configManagerTestSection = ConfigurationManager.GetSection("TestConfigSection") as TestConfigSection;
+        var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
 
 	var namedTestSection = NConfigurator.UsingFile(@"Config\Custom.config").GetSection<TestConfigSection>("NamedSection");
 
@@ -61,11 +61,126 @@ In case *{HostName}.Custom.config* do not exist, *Custom.config* file will be us
 
 For more complex examples please refer to Samples subfolder.
 
+### Integrations
+
+#### Log4Net
+ In most cases this very popular logging library uses direct access to App.config(Web.config) XML, 
+ ignoring *ConfigurationManager* and therefore ignoring *NConfig*. <br/>
+ 
+ *So, how can I configure it?* <br/>
+ There are several ways:
+ 
+ **First:** *If you just need to split log4net configuration from App.config.*
+ 
+Use `log4net.Config` setting in appSettings:
+	
+```
+        <appSettings>
+            <add key="log4net.Config" value="Config\separate-log4net.config"/>
+        </appSettings>
+```
+
+Or use `[assembly: log4net.Config.XmlConfigurator(ConfigFile = @"Config\separate-log4net.config")]` attribute. <br/>
+Or specify configuration file programmatically
+	
+```csahrp	    
+        var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"\Config\separate-log4net.config");
+        log4net.Config.XmlConfigurator.Configure(new FileInfo(fullPath));
+```
+More details [here] (http://logging.apache.org/log4net/release/manual/configuration.html)
+
+ **Second:** *If you need machine/host dependent log4net configurations.*
+
+One of the issue there is that usually log4net initialized earlier than NConfig, because of static field initialization.<br/>
+`private static log4net.ILog log = log4net.LogManager.GetLogger(...);`
+<br/>
+
+One way is to use `log4net.Config` setting with *current config file path* in your custom configuration file, <br/>
+and delay logger setup till NConfig initialized.
+
+File *Config\Custom.config*
+
+```
+      <?xml version="1.0"?>
+      <configuration>
+        <configSections>
+            <section name="log4net" type="System.Configuration.IgnoreSectionHandler" />
+        </configSections>
+
+        <appSettings>
+            <!-- This will override any previous log4net.Config settings in app.config and 
+                 forces log4net to use this file as configuration. -->
+            <add key="log4net.Config" value="Config\Custom.config"/>
+        </appSettings>
+        
+        <log4net>
+            <!-- log4net configuration here -->
+            ...
+        </log4net>
+        
+     </configuration>
+```
+
+Program code:
+
+```csharp
+   private static log4net.ILog log;
+
+   static void Main() {
+   
+	// Setup NConfigurator to use Custom.config file from Config subfolder.
+	NConfigurator.UsingFile(@"Config\Custom.config").SetAsSystemDefault();
+	
+	//Delayed log setup, this will configure log4net using current appSettings from Custom.config.
+	log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+	...
+```
+
+Another way is to use explicit `log4net.Config.XmlConfigurator.Configure();` call after *NConfig* initialization and
+declare `log4net` section as `Log4NetConfigurationSectionHandler`.
+This will allow us not to specify any additional configuration file paths in appSettings and will provide smooth NConfig experience.
+
+File *Config\Custom.config*
+
+```
+      <?xml version="1.0"?>
+      <configuration>
+        <configSections>
+            <!-- NOTE that we use Log4NetConfigurationSectionHandler to make log4net use ConfigurationManager -->
+            <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
+        </configSections>
+        
+        <log4net>
+            <!-- log4net configuration here -->
+            ...
+        </log4net>
+        
+     </configuration>
+```
+Program code:
+
+```csharp
+   private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+   static void Main() {
+   
+	// Setup NConfigurator to use Custom.config file from Config subfolder.
+	NConfigurator.UsingFile(@"Config\Custom.config").SetAsSystemDefault();
+	
+	// Configure log4net using host-based Custom.config configuration file.
+	log4net.Config.XmlConfigurator.Configure();
+	...
+```
+
+
+Feel free to contact me if you have any other questions related to NConfig integrations.
+
+
 ### Issues
 Currently NConfig was tested against ASP.Net, ASP.Net MVC, WinServices, WinForms/WPF, Console apps.
 Other environments are supposed to be supported too, but I haven't tested them yet.
 
-If you do everithing as described before, but no custom configuration applied, 
+If you do everything as described before, but no custom configuration applied, 
 please check that settings <br/> 
 `Copy To Output Directory = Copy Always` <br/>
 for all your configuration files.

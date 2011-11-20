@@ -34,6 +34,8 @@ Where **{HostName}** is the current machine name.
 
 In case *{HostName}.Custom.config* do not exist, *Custom.config* file will be used. Moreover if *Custom.config* is missing too, App.config (or Web.config) will be used.
 
+**NOTE:**<br/> You should set **Copy To Output Directory = Copy Always** for all your custom configuration files, otherwise they will not be copied to *Bin* folder and NConfig will not find them.
+
 #### Sample code from Samples\ConsoleTest:
 ```csharp
 	// Setup NConfigurator to use Custom.config file from Config subfolder.
@@ -62,6 +64,11 @@ For more complex examples please refer to Samples subfolder.
 ### Issues
 Currently NConfig was tested against ASP.Net, ASP.Net MVC, WinServices, WinForms/WPF, Console apps.
 Other environments are supposed to be supported too, but I haven't tested them yet.
+
+If you do everithing as described before, but no custom configuration applied, 
+please check that settings <br/> 
+`Copy To Output Directory = Copy Always` <br/>
+for all your configuration files.
 
 If you encounter any issues please do not hesitate to inform me using GitHub direct messages or raising issue on GitHub.
 

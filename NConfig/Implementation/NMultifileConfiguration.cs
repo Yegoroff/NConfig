@@ -131,7 +131,7 @@ namespace NConfig
             
             // Read section from custom configuration files.
             ConfigurationSection section;
-            foreach (string fileName in FileNames) // The order of files shoud be from most Important to lower
+            foreach (string fileName in FileNames) // The order of files should be from most Important to lower
             {
                 section = GetFileSection(fileName, sectionName);
                 if (section != null && section.ElementInformation.IsPresent) // filter non-required sections.
@@ -173,7 +173,7 @@ namespace NConfig
         public ConfigurationSectionGroup GetSectionGroup(string groupName)
         {
             ConfigurationSectionGroup group = null;
-            foreach (string fileName in FileNames) // The order of files shoud be from most Important to lower
+            foreach (string fileName in FileNames) // The order of files should be from most Important to lower
             {
                 Configuration config = Repository.GetFileConfiguration(fileName);
                 if (config != null)

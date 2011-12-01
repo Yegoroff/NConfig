@@ -10,7 +10,7 @@ namespace NConfig
         {
             AppSettingsSection result = new AppSettingsSection();
 
-            foreach (AppSettingsSection section in sections) // The order of files shoud be from most Important to lower
+            foreach (AppSettingsSection section in sections) // The order of sections should be from most Important to lower
             {
                 foreach (KeyValueConfigurationElement element in section.Settings)
                     if (result.Settings[element.Key] == null)

@@ -5,7 +5,7 @@ namespace NConfig.Tests
     public class TestSection : ConfigurationSection
     {
 
-        [ConfigurationProperty("value")]
+        [ConfigurationProperty("value", DefaultValue = "DEFAULT")]
         public string Value
         {
             get { return (string)this["value"]; }

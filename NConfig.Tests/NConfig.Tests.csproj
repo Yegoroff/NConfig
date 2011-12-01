@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="ConfigurationRepositoryTests.cs" />
     <Compile Include="ConfigurationRepositoryWebTests.cs" />
+    <Compile Include="MergeSection.cs" />
+    <Compile Include="PropertyLevelMergerTests.cs" />
     <Compile Include="TestSectionHandler.cs" />
     <Compile Include="TestSection.cs" />
     <Compile Include="NConfiguratorTests.cs" />
@@ -67,6 +69,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Configs\Aliased.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Configs\MergeTest.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Configs\SectionHandler.config">

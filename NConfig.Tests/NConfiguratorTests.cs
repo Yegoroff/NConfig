@@ -164,5 +164,25 @@ namespace NConfig.Tests
 
             Assert.That(section, Is.EqualTo("TestSectionHandler Data"));
         }
+
+        [Test]
+        public void Should_read_declared_but_not_present_section_from_custom_config_file()
+        {
+
+            var emptySection = NConfigurator.UsingFile("Configs\\NConfigTest.config").GetSection<TestSection>("EmptySection");
+
+            Assert.That(emptySection, Is.Not.Null);
+        }
+
+        [Test]
+        public void Should_read_defult_values_from_not_present_section_from_custom_config_file()
+        {
+
+            var emptySection = NConfigurator.UsingFile("Configs\\NConfigTest.config").GetSection<TestSection>("EmptySection");
+
+            Assert.That(emptySection.Value, Is.EqualTo("DEFAULT"));
+        }
+
+    
     }
 }

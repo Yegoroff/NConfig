@@ -111,7 +111,7 @@ namespace NConfig
         /// <param name="configuration"></param>
         /// <param name="groupName">The path name of the <see cref="System.Configuration.ConfigurationSectionGroup"/> to return.</param>
         /// <returns>The section group specified.</returns>
-        public static T GetGetSectionGroup<T>(this INConfiguration configuration, string groupName) where T : ConfigurationSectionGroup
+        public static T GetSectionGroup<T>(this INConfiguration configuration, string groupName) where T : ConfigurationSectionGroup
         {
             return configuration.GetSectionGroup(groupName) as T;
         }

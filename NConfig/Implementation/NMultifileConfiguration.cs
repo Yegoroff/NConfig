@@ -137,7 +137,7 @@ namespace NConfig
         {
             get
             {
-                // This property couldn't be caced, because of possible changes to app settings
+                // This property couldn't be cached, because of possible changes to app settings
                 // and nested configuration files on web
                 return GetConnectionStrings();
             }
@@ -147,7 +147,7 @@ namespace NConfig
         {
             get
             {
-                // This property couldn't be caced, because of possible changes to app settings
+                // This property couldn't be cached, because of possible changes to app settings
                 // and nested configuration files on webs
                 return GetAppSettings();
             }
@@ -159,20 +159,32 @@ namespace NConfig
             var sections = new List<ConfigurationSection>();
             
             // Read section from custom configuration files.
+            ConfigurationSection emptySection = null;
             ConfigurationSection section;
+
             foreach (string fileName in FileNames) // The order of files should be from most Important to lower
             {
                 section = GetFileSection(fileName, sectionName);
+                
                 // Filter out non-required sections (IsPresent == false) but leave DefaultSections, since them could represent IConfigurationSectionHandler sections.
-                if (section != null && (section.ElementInformation.IsPresent || section is DefaultSection))
-                    sections.Add(section);
+                if (section != null)
+                {
+                    if (section.ElementInformation.IsPresent || section is DefaultSection)
+                        sections.Add(section);
+                    else
+                        emptySection = section; // declared but not present section - should be used if nothing else found.
+                }
             }
-           
+
             // Read Section form Configuration Manager.
             section = GetDefaultSection(sectionName);
             if (section != null) // Add not presented sections too, because of non required sections should be returned.
                 sections.Add(section);
-            
+
+
+            if (emptySection != null)
+                sections.Add(emptySection);
+
             // Merge collected sections.
             if (sections.Count > 1) {
                 NSectionMerger merger = MergerRegistry.GetMerger(sections[0].GetType());

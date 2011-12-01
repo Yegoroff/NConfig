@@ -2,36 +2,14 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
 [assembly: AssemblyTitle("NConfig")]
-[assembly: AssemblyDescription("Multifile configuration for .Net")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Yegoroff")]
+[assembly: AssemblyDescription("Multifile host-based configuration for .Net")]
 [assembly: AssemblyProduct("NConfig")]
-[assembly: AssemblyCopyright("Copyright © Yegoroff 2011")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCopyright("Copyright © Alexander Yegorov 2011")]
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("d9ab0c68-93c0-4881-94cd-8297025f3ad9")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.6.0")]
-[assembly: AssemblyFileVersion("1.0.6.0")]
+[assembly: AssemblyVersion("1.0.7.0")]
+[assembly: AssemblyFileVersion("1.0.7.0")]
 [assembly: InternalsVisibleTo("NConfig.Tests")]

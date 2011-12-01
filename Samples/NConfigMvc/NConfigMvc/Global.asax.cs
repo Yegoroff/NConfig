@@ -34,10 +34,15 @@ namespace NConfigMvc
 
         }
 
-        protected void Application_Start()
+        static MvcApplication()
         {
+            // We need to initialize NConfigurator once per AppDomain. Static ctor works well for this purpose.
             NConfigurator.UsingFile(@"~\Config\Custom.config").SetAsSystemDefault();
+        }
 
+
+        protected void Application_Start()
+        {            
             AreaRegistration.RegisterAllAreas();
 
             RegisterGlobalFilters(GlobalFilters.Filters);

@@ -157,5 +157,12 @@ namespace NConfig.Tests
             }
         }
 
+        [Test]
+        public void Should_return_IConfigurationSectionHandler_Create_call_result_for_legacy_sections ()
+        {
+            var section = NConfigurator.UsingFile("Configs\\SectionHandler.config").GetSectionUntyped("TestSectionHandler") as string;
+
+            Assert.That(section, Is.EqualTo("TestSectionHandler Data"));
+        }
     }
 }

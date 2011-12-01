@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Xml;
 
 namespace NConfig
 {
@@ -96,6 +98,33 @@ namespace NConfig
             return sectionName.Equals("appSettings", System.StringComparison.InvariantCultureIgnoreCase);
         }
 
+        // .Net Framework handles IConfigurationSectionHandler sections only for default configurations (app/web.config), not for custom loaded.
+        // This is because IConfigurationSectionHandler is deprecated, but still alot of 3rd paty libraries use it. (log4net, nlog etc.)
+        // These sections returned as DefaultSection from Configuration.GetSection so we need to handle such sections by our self.
+        private object HandleIConfigurationSectionHandlerSection(DefaultSection section)
+        {
+            string sectionTypeName = section.SectionInformation.Type;
+            var sectionType = Type.GetType(sectionTypeName);
+
+            if (typeof (IConfigurationSectionHandler).IsAssignableFrom(sectionType))
+            {
+                // Create IConfigurationSectionHandler for this section.
+                var handler = Activator.CreateInstance(sectionType) as IConfigurationSectionHandler;
+                if (handler == null)
+                    return null;
+
+                var rawXml = section.SectionInformation.GetRawXml();
+                var doc = new XmlDocument();
+                doc.LoadXml(rawXml);
+
+                // Invoke IConfigurationSectionHandler.Create method with read rawXlm as parameter.
+                // We pass DocumentElement because some 3rd party libs expects XmlElement passed, not XmlNode as declared in Create signature.
+                return handler.Create(null, null, doc.DocumentElement);
+            }
+
+            return null;
+        }
+
 
         #region INConfiguration Members
 
@@ -134,7 +163,8 @@ namespace NConfig
             foreach (string fileName in FileNames) // The order of files should be from most Important to lower
             {
                 section = GetFileSection(fileName, sectionName);
-                if (section != null && section.ElementInformation.IsPresent) // filter non-required sections.
+                // Filter out non-required sections (IsPresent == false) but leave DefaultSections, since them could represent IConfigurationSectionHandler sections.
+                if (section != null && (section.ElementInformation.IsPresent || section is DefaultSection))
                     sections.Add(section);
             }
            
@@ -161,7 +191,12 @@ namespace NConfig
                 return AppSettings;
 
             // Try to return ConfigurationSection object
-            object res = GetSection(sectionName);
+            var res = GetSection(sectionName);
+
+            // Handle IConfigurationSectionHandler sections.
+            if (res is DefaultSection)
+                return HandleIConfigurationSectionHandlerSection((DefaultSection)res);
+
             if (res != null)
                 return res;
 

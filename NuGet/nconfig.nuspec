@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?> 
-<package> 
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata> 
     <id>NConfig</id> 
-    <version>1.0.6</version> 
+    <version>1.0.7</version> 
     <authors>Alexander Yegorov</authors>
-    <description>Multifile, host-based configuration for .Net</description> 
-    <language>en-US</language>
     <projectUrl>https://github.com/Yegoroff/NConfig</projectUrl>
+    <description>NConfig is a small library that allows using multi-file, host-based configurations in .Net</description>
+    <tags>config configuration nconfig</tags>
+    <frameworkAssemblies>
+        <frameworkAssembly assemblyName="System.Configuration"/>
+    </frameworkAssemblies>
   </metadata> 
 </package>

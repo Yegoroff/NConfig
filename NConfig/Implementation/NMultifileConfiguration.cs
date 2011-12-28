@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Reflection;
 using System.Xml;
 
 namespace NConfig
@@ -108,8 +109,12 @@ namespace NConfig
 
             if (typeof (IConfigurationSectionHandler).IsAssignableFrom(sectionType))
             {
+                var ctor = sectionType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
+                if (ctor == null)
+                    throw new InvalidOperationException("Can't instantiate section handler without default ctor.");
+
                 // Create IConfigurationSectionHandler for this section.
-                var handler = Activator.CreateInstance(sectionType) as IConfigurationSectionHandler;
+                var handler = Activator.CreateInstance(sectionType, true) as IConfigurationSectionHandler;
                 if (handler == null)
                     return null;
 

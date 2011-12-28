@@ -71,7 +71,7 @@ namespace NConfig
                 if (hostMapSection.Mappings.ContainsHost(hostName))
                     return hostMapSection.Mappings[hostName].Alias;
 
-                // Wildchar alias mapping.
+                // Wildcard alias mapping.
                 if (hostMapSection.Mappings.ContainsHost("*"))
                     return hostMapSection.Mappings["*"].Alias;
             }

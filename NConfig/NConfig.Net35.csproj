@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="IConfigurationFactory.cs" />
     <Compile Include="Implementation\ConfigurationFactory.cs" />
+    <Compile Include="Implementation\Mergers\PropertyLevelMerger.cs" />
     <Compile Include="Implementation\NSectionMergerRegistry.cs" />
     <Compile Include="Implementation\System\NConfigRecordConfiguration.cs" />
     <Compile Include="Implementation\System\NSystemConfigurator.cs" />

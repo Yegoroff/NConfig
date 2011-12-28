@@ -135,7 +135,7 @@ namespace NConfig.Tests
         }
 
         [Test]
-        public void Should_pass_sections_to_section_merger_starting_from_most_important ()
+        public void Should_pass_sections_to_section_merger_starting_from_most_important()
         {
             NSectionMerger<TestSection> mergerStub = MockRepository.GenerateStub<NSectionMerger<TestSection>>();
 
@@ -158,11 +158,19 @@ namespace NConfig.Tests
         }
 
         [Test]
-        public void Should_return_IConfigurationSectionHandler_Create_call_result_for_legacy_sections ()
+        public void Should_return_IConfigurationSectionHandler_Create_call_result_for_legacy_sections()
         {
-            var section = NConfigurator.UsingFile("Configs\\SectionHandler.config").GetSectionUntyped("TestSectionHandler") as string;
+            object section = NConfigurator.UsingFile("Configs\\SectionHandler.config").GetSectionUntyped("TestSectionHandler");
 
             Assert.That(section, Is.EqualTo("TestSectionHandler Data"));
+        }
+
+        [Test]
+        public void Should_return_null_when_legacy_section_declared_but_not_present()
+        {
+            var section = NConfigurator.UsingFile("Configs\\EmptySectionHandler.config").GetSectionUntyped("TestSectionHandler") as string;
+
+            Assert.That(section, Is.Null);
         }
 
         [Test]

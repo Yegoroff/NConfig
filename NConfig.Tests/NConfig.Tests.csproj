@@ -71,6 +71,9 @@
     <None Include="Configs\Aliased.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Configs\EmptySectionHandler.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Configs\MergeTest.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

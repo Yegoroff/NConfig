@@ -119,6 +119,9 @@ namespace NConfig
                     return null;
 
                 var rawXml = section.SectionInformation.GetRawXml();
+                if (string.IsNullOrEmpty(rawXml))
+                    return null;
+
                 var doc = new XmlDocument();
                 doc.LoadXml(rawXml);
 

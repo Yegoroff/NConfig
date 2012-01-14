@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata> 
     <id>NConfig</id> 
-    <version>1.0.10</version> 
+    <version>1.0.11</version> 
     <authors>Alexander Yegorov</authors>
     <projectUrl>https://github.com/Yegoroff/NConfig</projectUrl>
     <description>NConfig is a small library that allows using multi-file, host-based configurations in .Net</description>

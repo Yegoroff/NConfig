@@ -100,7 +100,7 @@ namespace NConfig
         }
 
         // .Net Framework handles IConfigurationSectionHandler sections only for default configurations (app/web.config), not for custom loaded.
-        // This is because IConfigurationSectionHandler is deprecated, but still alot of 3rd paty libraries use it. (log4net, nlog etc.)
+        // This is because IConfigurationSectionHandler is deprecated, but still a lot of 3rd party libraries use it. (log4net, nlog etc.)
         // These sections returned as DefaultSection from Configuration.GetSection so we need to handle such sections by our self.
         private object HandleIConfigurationSectionHandlerSection(DefaultSection section)
         {
@@ -131,6 +131,15 @@ namespace NConfig
             }
 
             return null;
+        }
+
+        private bool IsSectionPresentInConfigFile(ConfigurationSection section)
+        {
+            // Default session always has ElementInformation.IsPresent == false. So we just check content availability.
+            if (section is DefaultSection)
+                return !string.IsNullOrEmpty(section.SectionInformation.GetRawXml());
+
+            return section.ElementInformation.IsPresent;
         }
 
 
@@ -174,12 +183,15 @@ namespace NConfig
             {
                 section = GetFileSection(fileName, sectionName);
                 
-                // Filter out non-required sections (IsPresent == false) but leave DefaultSections, since them could represent IConfigurationSectionHandler sections.
+                // Filter out non-present in file sections (IsPresent == false).
                 if (section != null)
                 {
-                    if (section.ElementInformation.IsPresent || section is DefaultSection)
+                    if ( IsSectionPresentInConfigFile(section))
                         sections.Add(section);
-                    else
+                    
+                    // Do not add non present DefaultSections, they will be bank - so no handler processing occurred.
+                    // Also this could prevent from returning Default system section. (as with section "system.web/browserCaps" under web)
+                    else if (!(section is DefaultSection) && section.SectionInformation.IsDeclared)
                         emptySection = section; // declared but not present section - should be used if nothing else found.
                 }
             }

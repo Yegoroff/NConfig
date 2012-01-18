@@ -1,4 +1,4 @@
-@set NUGET="Lib\NuGet.CommandLine.1.5.21005.9019\tools\NuGet.exe"
+@set NUGET="Lib\NuGet.CommandLine.1.6.0\tools\NuGet.exe"
 
 @echo ==========================
 @echo NuGet package publishing.

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NConfig")]
 [assembly: AssemblyDescription("Multifile host-based configuration for .Net")]
 [assembly: AssemblyProduct("NConfig")]
-[assembly: AssemblyCopyright("Copyright © Alexander Yegorov 2011")]
+[assembly: AssemblyCopyright("Copyright © Alexander Yegorov 2012")]
 
 [assembly: ComVisible(false)]
 [assembly: Guid("d9ab0c68-93c0-4881-94cd-8297025f3ad9")]

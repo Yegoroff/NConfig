@@ -36,6 +36,9 @@ namespace NConfigMvc
 
         static MvcApplication()
         {
+            // This will simulate single core CPU so we can check how configuration substitution works on such systems.
+            // System.Diagnostics.Process.GetCurrentProcess().ProcessorAffinity = (System.IntPtr)1;
+
             // We need to initialize NConfigurator once per AppDomain. Static ctor works well for this purpose.
             NConfigurator.UsingFile(@"~\Config\Custom.config").SetAsSystemDefault();
         }

@@ -8,6 +8,9 @@ namespace WebClient
 
         static Global()
         {
+            // This will simulate single core CPU so we can check how configuration substitution works on such systems.
+            //System.Diagnostics.Process.GetCurrentProcess().ProcessorAffinity = (System.IntPtr)1;
+
             // We need to initialize NConfigurator once per AppDomain. Static ctor works well for this purpose.
             NConfigurator.UsingFiles(@"~\Config\WebClientSvc.config",
                 @"~\Config\Custom.config").SetAsSystemDefault();

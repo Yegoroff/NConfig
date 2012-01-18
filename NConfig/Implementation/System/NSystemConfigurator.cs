@@ -6,7 +6,7 @@ using System.Configuration.Internal;
 namespace NConfig
 {
     /// <summary>
-    /// Incapsulates forbidden magic that allows to smoothly use NConfig and System.Configuration
+    /// Encapsulates forbidden magic that allows to smoothly use NConfig and System.Configuration
     /// </summary>
     internal class NSystemConfigurator: INSystemConfigurator
     {

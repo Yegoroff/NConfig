@@ -7,7 +7,7 @@ using System.Linq;
 namespace NConfig
 {
     /// <summary>
-    /// Incapsulates forbidden magic that allows to smoothly use NConfig and System.Web.Configuration
+    /// Encapsulates forbidden magic that allows to smoothly use NConfig and System.Web.Configuration
     /// </summary>
     internal class NWebSystemConfigurator : NSystemConfigurator
     {
@@ -38,44 +38,62 @@ namespace NConfig
             string configPath = "dmachine/webroot/" + siteId;
 
             var httpRuntime = new ReflectionAccessor(systemWebAss.GetType("System.Web.HttpRuntime"));
-            var internalCache = new ReflectionAccessor(httpRuntime.GetProperty("CacheInternal"));
-            var caches = internalCache.GetField("_caches") as IEnumerable ?? Enumerable.Empty<object>();
+            object cacheInternal = httpRuntime.GetProperty("CacheInternal");
 
-            // Get all site specific configuration records keys for internal cache.
             var rootReplacement = replacingSystem.Root as NConfigRootReplacement;
+
+            // In case of single CPU internal caching uses CacheSingle.
+            if (cacheInternal.GetType().Name == "CacheSingle")
+                UpdateCacheSingle(rootReplacement, cacheInternal, configPath);
+            else
+                UpdateCacheMultiple(rootReplacement, configPath, cacheInternal);
+
+            OriginalConfiguration = originalConfigSystem;
+        }
+
+        private static void UpdateCacheMultiple(NConfigRootReplacement rootReplacement, string configPath, object cacheInternal)
+        {
+            var cacheMultiple = new ReflectionAccessor(cacheInternal);
+            var caches = cacheMultiple.GetField("_caches") as IEnumerable ?? Enumerable.Empty<object>();
+
             foreach (var cache in caches)
             {
-                // Caches stored in array ala hash, so there is could be gaps.
+                // Caches stored in array ala hash, so there are could be gaps.
                 if (cache == null)
                     continue;
 
-                var cacheAcessor = new ReflectionAccessor(cache);
-                lock (cacheAcessor.GetField("_lock"))
+                UpdateCacheSingle(rootReplacement, cache, configPath);
+            }
+        }
+
+        private static void UpdateCacheSingle(NConfigRootReplacement rootReplacement, object cache, string configPath)
+        {
+            var cacheAcessor = new ReflectionAccessor(cache);
+            lock (cacheAcessor.GetField("_lock"))
+            {
+                var entries = cacheAcessor.GetField("_entries") as IEnumerable ?? Enumerable.Empty<object>();
+
+                // Get all site specific configuration records keys for internal cache.
+
+                // cache "entries" is a HashTable, so just iterate through
+                foreach (DictionaryEntry entry in entries)
                 {
-                    var entries = cacheAcessor.GetField("_entries") as IEnumerable ?? Enumerable.Empty<object>();
+                    var keyAccessor = new ReflectionAccessor(entry.Key);
 
-                    // entries is HashTable, so just iterate through 
-                    foreach (DictionaryEntry entry in entries)
-                    {
-                        var keyAccessor = new ReflectionAccessor(entry.Key);
+                    // Only configuration cache entries replaced.
+                    if (!keyAccessor.GetProperty("Key").ToString().StartsWith(configPath))
+                        continue;
 
-                        // Only configuration cache entries replaced.
-                        if (!keyAccessor.GetProperty("Key").ToString().StartsWith(configPath))
-                            continue;
+                    // Key and Value is the same object in the configuration cache entry.
+                    var entryValueAccesor = new ReflectionAccessor(keyAccessor.GetField("_value"));
+                    var runtimeConfigAccessor = new ReflectionAccessor(entryValueAccesor.GetField("_runtimeConfig"));
 
-                        // Key and Value is the same object in the configuration cache entry.
-                        var entryValueAccesor = new ReflectionAccessor(keyAccessor.GetField("_value"));
-                        var runtimeConfigAccessor = new ReflectionAccessor(entryValueAccesor.GetField("_runtimeConfig"));
-
-                        IInternalConfigRecord replacingRecord = rootReplacement.CreateConfigRecord(runtimeConfigAccessor.GetField<IInternalConfigRecord>("_configRecord"));
-                        runtimeConfigAccessor.SetField("_configRecord", replacingRecord);
-                        runtimeConfigAccessor.SetField("_runtimeConfigLKG", null);
-                    }
-
+                    IInternalConfigRecord replacingRecord =
+                        rootReplacement.CreateConfigRecord(runtimeConfigAccessor.GetField<IInternalConfigRecord>("_configRecord"));
+                    runtimeConfigAccessor.SetField("_configRecord", replacingRecord);
+                    runtimeConfigAccessor.SetField("_runtimeConfigLKG", null);
                 }
             }
-
-            OriginalConfiguration = originalConfigSystem;
         }
 
 

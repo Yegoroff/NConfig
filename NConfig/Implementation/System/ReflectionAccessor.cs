@@ -26,6 +26,10 @@ namespace NConfig
 
         private ReflectionAccessor(Type accessedType, object instance)
         {
+            if (accessedType == null)
+                throw new ArgumentNullException("accessedType");
+
+            // Assigning used to convert function to delegate.
             PropertyGetter  = (PropertyGetter = PropertyGetterFunc).Memoize();
             PropertySetter  = (PropertySetter = PropertySetterAction).Memoize();
             FieldGetter     = (FieldGetter = FieldGetterFunc).Memoize();

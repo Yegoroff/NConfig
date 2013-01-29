@@ -9,9 +9,8 @@ namespace NConfig
         private const string HostMapFile = "HostMap.config";
 
         private readonly IConfigurationRepository repository;
-        private readonly string hostAlias;
         private readonly bool isWeb;
-
+        private string hostAlias;
 
         public NConfigSettings(IConfigurationRepository repository)
         {
@@ -22,7 +21,7 @@ namespace NConfig
 
 
         /// <summary>
-        /// Gets the alias assigned for current Host.
+        /// Gets or sets the alias assigned for current Host.
         /// This alias used to find out Host specific configurations.
         /// </summary>
         /// <value>The host's alias.</value>
@@ -31,6 +30,10 @@ namespace NConfig
             get
             {
                 return hostAlias;
+            }
+            set
+            {
+                hostAlias = value;
             }
         }
 
@@ -49,7 +52,7 @@ namespace NConfig
 
         /// <summary>
         /// Detects the alias for the current host.
-        /// First it reads HostMap.Config file then searches inside App.Config, if not sucessful
+        /// First it reads HostMap.Config file then searches inside App.Config, if not successful
         /// returns current host name.
         /// </summary>
         private string DetectHostAlias()

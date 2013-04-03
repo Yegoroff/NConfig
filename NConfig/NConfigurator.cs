@@ -98,6 +98,18 @@ namespace NConfig
         }
 
 
+        /// <summary>
+        /// Represents current settings of NConfig alias and detected environment.
+        /// </summary>
+        public static INConfigSettings Settings
+        {
+            get
+            {
+                return settings;
+            }
+        }
+
+
         internal static IConfigurationRepository Repository
         {
             get
@@ -119,14 +131,6 @@ namespace NConfig
             get
             {
                 return configurationFactory;
-            }
-        }
-
-        internal static INConfigSettings Settings
-        {
-            get
-            {
-                return settings;
             }
         }
 

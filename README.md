@@ -41,11 +41,8 @@ In case *{HostName}.Custom.config* do not exist, *Custom.config* file will be us
 	// Setup NConfigurator to use Custom.config file from Config subfolder.
 	NConfigurator.UsingFile(@"Config\Custom.config").SetAsSystemDefault();
 
-
-        var configManagerTestSection = ConfigurationManager.GetSection("TestConfigSection") as TestConfigSection;
-
-        var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
-
+	var testSection = NConfigurator.Default.GetSection<TestConfigSection>();
+	var configManagerTestSection = ConfigurationManager.GetSection("TestConfigSection") as TestConfigSection;
 	var namedTestSection = NConfigurator.UsingFile(@"Config\Custom.config").GetSection<TestConfigSection>("NamedSection");
 
 	Console.WriteLine("NConfig Default : " + testSection.TestValue);

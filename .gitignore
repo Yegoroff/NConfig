@@ -7,3 +7,4 @@ _ReSharper.*
 App_Data
 *.ncrunchsolution
 *.ncrunchproject
+*.crunchsolution.cache

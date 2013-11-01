@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 
 namespace NConfig
 {
@@ -11,5 +12,10 @@ namespace NConfig
         /// <param name="fileName">Name of the configuration file.</param>
         /// <returns>The Configuration instance that provides access to configuration.</returns>
         Configuration GetFileConfiguration(string fileName);
+
+        /// <summary>
+        /// Dumps searched file paths and missed/applied configuration filenames.
+        /// </summary>
+        string DumpDiagnostics(IList<string> preconfiguredFilenames);
     }
 }

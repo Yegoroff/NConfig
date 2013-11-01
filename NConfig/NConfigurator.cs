@@ -49,7 +49,7 @@ namespace NConfig
         /// <param name="fileNames">The array of path of the configuration files.</param>
         public static INConfiguration UsingFiles(params string[] fileNames)
         {
-            List<string> configNames = new List<string>(fileNames.Length * 2);
+            var configNames = new List<string>(fileNames.Length * 2);
             foreach (string name in fileNames)
             {
                 configNames.Add(settings.GetAliasedFileName(name));

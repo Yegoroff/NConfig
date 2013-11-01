@@ -253,6 +253,23 @@ namespace NConfig
             return null;
         }
 
+        public string DumpDiagnostics()
+        {
+            string hostName = Environment.MachineName;
+            string alias = NConfigurator.Settings.HostAlias;
+            bool isWebEnvironment = NConfigurator.Settings.IsWeb;
+            string repositoryDump = repository.DumpDiagnostics(fileNames);
+
+            string result = "NConfig Diagnostics \r\n" +
+                            "Host name: " + hostName + "\r\n" +
+                            "Host alias: " + alias + "\r\n" +
+                            "Web Environment: " + isWebEnvironment + "\r\n" +
+                            "Configuration files: \r\n" +
+                            repositoryDump;
+
+            return result;
+        }
+
         #endregion
     }
 

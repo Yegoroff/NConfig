@@ -191,6 +191,25 @@ namespace NConfig.Tests
             Assert.That(emptySection.Value, Is.EqualTo("DEFAULT"));
         }
 
+
+        [Test]
+        public void Should_dump_correct_diagnostics()
+        {
+            var diagnostics =
+                NConfigurator.UsingFiles("NotExisting.config", "Configs\\Aliased.config").DumpDiagnostics();
+
+            Assert.That(diagnostics, Is.StringContaining("NConfig Diagnostics"));
+            Assert.That(diagnostics, Is.StringContaining("Host name: " + Environment.MachineName));
+            Assert.That(diagnostics, Is.StringContaining("Host alias: Tests"));
+            Assert.That(diagnostics, Is.StringContaining("Web Environment: False"));
+            
+            Assert.That(diagnostics, Is.StringContaining("missing file: 'Tests.NotExisting.config' location:"));
+            Assert.That(diagnostics, Is.StringContaining("missing file: 'NotExisting.config' location:"));
+            Assert.That(diagnostics, Is.StringContaining(@"exists file: 'Configs\Tests.Aliased.config' location:"));
+            Assert.That(diagnostics, Is.StringContaining(@"exists file: 'Configs\Aliased.config' location:"));
+
+        }
+
     
     }
 }

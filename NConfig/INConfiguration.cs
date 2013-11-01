@@ -66,6 +66,11 @@ namespace NConfig
         /// <param name="groupName"> The path name of the <see cref="System.Configuration.ConfigurationSectionGroup"/> to return.</param>
         /// <returns>The <see cref="System.Configuration.ConfigurationSectionGroup"/> specified.</returns>
         ConfigurationSectionGroup GetSectionGroup(string groupName);
+
+        /// <summary>
+        /// Dumps configurator settings and actual configuration files paths to string.
+        /// </summary>
+        string DumpDiagnostics();
     }
 
 

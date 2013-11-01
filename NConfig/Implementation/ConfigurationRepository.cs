@@ -30,6 +30,25 @@ namespace NConfig
             }
         }
 
+
+        public string DumpDiagnostics(IList<string> preconfiguredFilenames)
+        {
+            string result = "";
+            foreach (var fileName in preconfiguredFilenames)
+            {
+                var filePath = ToAbsolutePath(fileName);
+                string fileState = "missing";
+                if (File.Exists(filePath))
+                {
+                    fileState =  configCache.ContainsKey(filePath) ? "applied" : "exists";                    
+                }
+
+                result += fileState + " file: '" + fileName + "' location: '" + filePath + "' \r\n";
+            }
+            return result;
+        }
+
+
         protected virtual string ToAbsolutePath(string path)
         {
             if (!Path.IsPathRooted(path))

@@ -4,6 +4,15 @@ NConfig is a .Net library that allows using multi-file, host-based configuration
 
 This is thing you are really missing during staged deployments and with developer dependent environments.
 
+* [License](#license)
+* [Building](#building)
+* [NuGet support](#nuget-support)
+* [Examples](#examples)
+* [log4net integration](#log4net)
+* [Debug](#debug)
+* [Issues](#issues)
+
+
 ### License
 All Original Software is licensed under the MIT License (see LICENSE.txt) and does not apply to any other 3rd party tools, utilities or code which may be used to develop this application.
 
@@ -172,6 +181,24 @@ Program code:
 
 Feel free to contact me if you have any other questions related to NConfig integrations.
 
+### Debug
+
+You can review how NConfig setup by calling `NConfigurator.Default.DumpDiagnostics();`
+
+The output will be in a form of string that allows you to review 
+what configuration files NConfig is looking for and what files it used to construct the final configuration.
+
+```
+NConfig Diagnostics 
+Host name: Workstation
+Host alias: Tests
+Web Environment: False
+Configuration files: 
+missing file: 'Tests.NotExisting.config' location: 'C:\NConfig\NConfig.Tests\bin\Debug\Tests.NotExisting.config' 
+missing file: 'NotExisting.config' location: 'C:\NConfig\NConfig.Tests\bin\Debug\NotExisting.config' 
+exists file: 'Configs\Tests.Aliased.config' location: 'C:\NConfig\NConfig.Tests\bin\Debug\Configs\Tests.Aliased.config' 
+exists file: 'Configs\Aliased.config' location: 'C:\NConfig\NConfig.Tests\bin\Debug\Configs\Aliased.config' 
+```
 
 ### Issues
 Currently NConfig was tested against ASP.Net, ASP.Net MVC, WinServices, WinForms/WPF, Console apps.
@@ -182,7 +209,7 @@ please check that settings <br/>
 `Copy To Output Directory = Copy Always` <br/>
 for all your configuration files.
 
-If you encounter any issues please do not hesitate to inform me using GitHub direct messages or raising issue on GitHub.
+If you encounter any issues please do not hesitate to contact me directly or by raising issue on GitHub.
 
 ### Thanks
 I would like to thank my colleagues for helping me testing and fixing this tool. Also thanks to TLK for his help in this file creation.

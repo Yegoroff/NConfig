@@ -43,6 +43,11 @@ Where **{HostName}** is the current machine name.
 
 In case *{HostName}.Custom.config* do not exist, *Custom.config* file will be used. Moreover if *Custom.config* is missing too, App.config (or Web.config) will be used.
 
+**Host Alias and Environment Variable**<br/>
+You can create a custmom alias for a host by setting the HostName and Alias in a HostMap.config. It will then use the *{AliasName}.Custom.Config* instead of the HostName. See the examples for details. <br/>
+It's also possible to supply an alias name by setting the environment variable *NCONFIG_ALIAS* for the running process. This is useful for cloud hosting scenario's where you don't know the hostname in advance. <br/>
+For Microsoft Azure Websites you can set the *NCONFIG_ALIAS* as an App Setting through the Azure portal and it will be available as environment variable for NConfig.
+
 **NOTE:**<br/> You should set **Copy To Output Directory = Copy Always** for all your custom configuration files, otherwise they will not be copied to *Bin* folder and NConfig will not find them.
 
 #### Sample code from Samples\ConsoleTest:

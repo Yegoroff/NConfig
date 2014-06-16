@@ -7,6 +7,7 @@ namespace NConfig
     internal sealed class NConfigSettings : INConfigSettings
     {
         private const string HostMapFile = "HostMap.config";
+        private const string EnvironmentVarName = "NCONFIG_ALIAS";
 
         private readonly IConfigurationRepository repository;
         private readonly bool isWeb;
@@ -57,6 +58,11 @@ namespace NConfig
         /// </summary>
         private string DetectHostAlias()
         {
+            //Try to read the Environment variable and use it as an Alias
+            string environmentAlias = Environment.GetEnvironmentVariable(EnvironmentVarName);
+            if (!string.IsNullOrEmpty(environmentAlias))
+                return environmentAlias;
+
             // Try to read from HostMap.config file, then try to read from AppConfig/WebConfig
             string hostName = Environment.MachineName;
             HostMapSection hostMapSection = null;

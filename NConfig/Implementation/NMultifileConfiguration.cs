@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 
@@ -171,10 +172,52 @@ namespace NConfig
         }
 
 
+        /// <summary>
+        /// Retrieve the environment variables with the given prefix and strips these prefixes from the returned keyvaluePairs
+        /// </summary>
+        /// <param name="environmentVarPrefix"></param>
+        /// <returns></returns>
+        private static IDictionary<string, string> GetAzureEnvironmentVariables(params string[] environmentVarPrefix)
+        {
+          var environmentVariables = Environment.GetEnvironmentVariables();
+
+          return environmentVarPrefix
+            .SelectMany(prefix => environmentVariables
+              .Keys.Cast<string>()
+              .Where(key => key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+              .ToDictionary(key => key.Replace(prefix, ""), key => environmentVariables[key] as string)
+            ).ToDictionary(kv => kv.Key, kv => kv.Value);
+        }
+
         public ConfigurationSection GetSection(string sectionName)
         {
             var sections = new List<ConfigurationSection>();
-            
+
+            /**
+             * Azure overrides appsettings/connectionstrings which are configured in the portal on first load of the web.config 
+             * But if we re-configure those settings in a {hostname}.custom.config then the ordering is incorrect.
+             * 
+             * To fix this we can extract those portal-configured settings from the environment vars by their
+             * prefix and add these to the initial section (which has the highest priority when merging config sections
+             * back to one section
+             */
+            if (sectionName.Equals("AppSettings", StringComparison.OrdinalIgnoreCase))
+            {
+              var settings = GetAzureEnvironmentVariables(@"APPSETTING_");
+              var environmentVarSection = new AppSettingsSection();
+              foreach (var kv in settings)
+                environmentVarSection.Settings.Add(kv.Key, kv.Value);
+              sections.Add(environmentVarSection);
+            }
+            else if(sectionName.Equals("ConnectionStrings", StringComparison.OrdinalIgnoreCase))
+            {
+              var settings = GetAzureEnvironmentVariables(@"SQLAZURECONNSTR_", @"SQLCONNSTR_", @"MYSQLCONNSTR_", @"CUSTOMCONNSTR_");
+              var environmentVarSection = new ConnectionStringsSection();
+              foreach (var kv in settings)
+                environmentVarSection.ConnectionStrings.Add(new ConnectionStringSettings(kv.Key, kv.Value));
+              sections.Add(environmentVarSection);
+            }
+
             // Read section from custom configuration files.
             ConfigurationSection emptySection = null;
             ConfigurationSection section;

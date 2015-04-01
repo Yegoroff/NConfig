@@ -7,7 +7,7 @@ namespace NConfig
     internal class NConfigSystemReplacement : IConfigSystem
     {
         private readonly IConfigSystem originalConfigSystem;
-        private readonly NConfigRootReplacement replacedRoot;        
+        private readonly NConfigRootReplacement replacedRoot;
 
 
         public NConfigSystemReplacement(IConfigSystem originalConfigSystem, IConfigurationFactory factory, IList<string> fileNames)

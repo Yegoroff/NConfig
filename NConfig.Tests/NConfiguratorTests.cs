@@ -176,7 +176,6 @@ namespace NConfig.Tests
         [Test]
         public void Should_read_declared_but_not_present_section_from_custom_config_file()
         {
-
             var emptySection = NConfigurator.UsingFile("Configs\\NConfigTest.config").GetSection<TestSection>("EmptySection");
 
             Assert.That(emptySection, Is.Not.Null);
@@ -263,8 +262,12 @@ namespace NConfig.Tests
         [Test]
         public void Should_dump_correct_diagnostics()
         {
-            var diagnostics =
-                NConfigurator.UsingFiles("NotExisting.config", "Configs\\Aliased.config").DumpDiagnostics();
+            var configuration = NConfigurator.UsingFiles("NotExisting.config", "Configs\\Aliased.config");
+            
+            // populate config cache to get consistent diagnostic results
+            configuration.GetSection<TestSection>();
+
+            var diagnostics = configuration.DumpDiagnostics();
 
             Assert.That(diagnostics, Is.StringContaining("NConfig Diagnostics"));
             Assert.That(diagnostics, Is.StringContaining("Host name: " + Environment.MachineName));
@@ -273,11 +276,9 @@ namespace NConfig.Tests
             
             Assert.That(diagnostics, Is.StringContaining("missing file: 'Tests.NotExisting.config' location:"));
             Assert.That(diagnostics, Is.StringContaining("missing file: 'NotExisting.config' location:"));
-            Assert.That(diagnostics, Is.StringContaining(@"exists file: 'Configs\Tests.Aliased.config' location:"));
-            Assert.That(diagnostics, Is.StringContaining(@"exists file: 'Configs\Aliased.config' location:"));
-
+            Assert.That(diagnostics, Is.StringContaining(@"applied file: 'Configs\Tests.Aliased.config' location:"));
+            Assert.That(diagnostics, Is.StringContaining(@"applied file: 'Configs\Aliased.config' location:"));
         }
-
     
     }
 }

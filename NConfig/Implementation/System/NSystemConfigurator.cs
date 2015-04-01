@@ -42,6 +42,9 @@ namespace NConfig
             ConfigurationManager.GetSection("appSettings"); // This will init Configuration manager internal config system.
             var originalConfigSystem = configManager.GetField<IInternalConfigSystem>("s_configSystem");
 
+            if (originalConfigSystem is NSystemReplacementConfiguration)
+                throw new InvalidOperationException("System default configuration already substituted.");
+
             NSystemReplacementConfiguration replacementConfigSytem = factory.CreateSystemReplacementConfiguration(originalConfigSystem, fileNames);
 
             configManager.SetField("s_configSystem", replacementConfigSytem);

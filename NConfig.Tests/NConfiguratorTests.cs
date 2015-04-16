@@ -191,6 +191,74 @@ namespace NConfig.Tests
             Assert.That(emptySection.Value, Is.EqualTo("DEFAULT"));
         }
 
+        [Test]
+        public void AppSettings_MustRead_AzureConfiguredEnvironmentVars()
+        {
+          const string appSettingKey = "some-azure-portal-appsetting";
+          const string appSettingValue = "some_value";
+          const string azureAppSettingEnvironmentVarPrefix = "APPSETTING_";
+
+          try
+          {
+            Environment.SetEnvironmentVariable(azureAppSettingEnvironmentVarPrefix + appSettingKey, appSettingValue, EnvironmentVariableTarget.Process);
+
+            var appSettingsSection = NConfigurator.UsingFile("Configs\\NConfigTest.config").GetSection<AppSettingsSection>("AppSettings");
+
+            Assert.That(appSettingsSection.Settings.AllKeys, Contains.Item(appSettingKey));
+            Assert.That(appSettingsSection.Settings[appSettingKey].Value, Is.StringMatching(appSettingValue));
+          }
+          finally
+          {
+            Environment.SetEnvironmentVariable(azureAppSettingEnvironmentVarPrefix + appSettingKey, null, EnvironmentVariableTarget.Process);
+          }
+        }
+
+        [Test]
+        public void Should_merge_default_AppSettings_with_defined_in_file_and_azure_environmentvar_should_take_precedence()
+        {
+          const string appSettingKey = "test";
+          const string appSettingValue = "some_value_from_azure_env_vars";
+          const string azureAppSettingEnvironmentVarPrefix = "APPSETTING_";
+
+          try
+          {
+            Environment.SetEnvironmentVariable(azureAppSettingEnvironmentVarPrefix + appSettingKey, appSettingValue, EnvironmentVariableTarget.Process);
+
+            var appSettingsSection = NConfigurator.UsingFile("Configs\\NConfigTest.config").GetSection<AppSettingsSection>("AppSettings");
+
+            Assert.That(appSettingsSection.Settings.AllKeys, Contains.Item(appSettingKey));
+            Assert.That(appSettingsSection.Settings[appSettingKey].Value, Is.StringMatching(appSettingValue));
+          }
+          finally
+          {
+            Environment.SetEnvironmentVariable(azureAppSettingEnvironmentVarPrefix + appSettingKey, null, EnvironmentVariableTarget.Process);
+          }
+        }
+      
+        [Test]
+        [TestCase("SQLAZURECONNSTR_")]
+        [TestCase("SQLCONNSTR_")]
+        [TestCase("MYSQLCONNSTR_")]
+        [TestCase("CUSTOMCONNSTR_")]
+        public void ConnectionStrings_MustRead_AzureConfiguredEnvironmentVars(string azureConnectionStringEnvironmentVarPrefix)
+        {
+          const string connectionStringKey = "some-azure-portal-connectionstring";
+          const string connectionStringValue = "some_value";
+
+          try
+          {
+            Environment.SetEnvironmentVariable(azureConnectionStringEnvironmentVarPrefix + connectionStringKey, connectionStringValue, EnvironmentVariableTarget.Process);
+
+            var connectionStringsSection = NConfigurator.UsingFile("Configs\\NConfigTest.config").GetSection<ConnectionStringsSection>("ConnectionStrings");
+
+            Assert.That(connectionStringsSection.ConnectionStrings[connectionStringKey], Is.Not.Null, string.Format("the environment var '{0}{1}' should be added to the connectionStrings as '{1}'", azureConnectionStringEnvironmentVarPrefix, connectionStringKey));
+            Assert.That(connectionStringsSection.ConnectionStrings[connectionStringKey].ConnectionString, Is.StringMatching(connectionStringValue));
+          }
+          finally
+          {
+            Environment.SetEnvironmentVariable(azureConnectionStringEnvironmentVarPrefix + connectionStringKey, null, EnvironmentVariableTarget.Process);
+          }
+        }
 
         [Test]
         public void Should_dump_correct_diagnostics()

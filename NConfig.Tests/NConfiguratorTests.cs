@@ -235,11 +235,11 @@ namespace NConfig.Tests
         }
       
         [Test]
-        [TestCase("SQLAZURECONNSTR_")]
-        [TestCase("SQLCONNSTR_")]
-        [TestCase("MYSQLCONNSTR_")]
-        [TestCase("CUSTOMCONNSTR_")]
-        public void ConnectionStrings_MustRead_AzureConfiguredEnvironmentVars(string azureConnectionStringEnvironmentVarPrefix)
+        [TestCase("SQLAZURECONNSTR_", "System.Data.SqlClient")]
+        [TestCase("SQLCONNSTR_", "System.Data.SqlClient")]
+        [TestCase("MYSQLCONNSTR_", "MySql.Data.MySqlClient")]
+        [TestCase("CUSTOMCONNSTR_", "")]
+        public void ConnectionStrings_MustRead_AzureConfiguredEnvironmentVars(string azureConnectionStringEnvironmentVarPrefix, string providerName)
         {
           const string connectionStringKey = "some-azure-portal-connectionstring";
           const string connectionStringValue = "some_value";
@@ -252,6 +252,7 @@ namespace NConfig.Tests
 
             Assert.That(connectionStringsSection.ConnectionStrings[connectionStringKey], Is.Not.Null, string.Format("the environment var '{0}{1}' should be added to the connectionStrings as '{1}'", azureConnectionStringEnvironmentVarPrefix, connectionStringKey));
             Assert.That(connectionStringsSection.ConnectionStrings[connectionStringKey].ConnectionString, Is.StringMatching(connectionStringValue));
+            Assert.That(connectionStringsSection.ConnectionStrings[connectionStringKey].ProviderName, Is.StringMatching(providerName));
           }
           finally
           {

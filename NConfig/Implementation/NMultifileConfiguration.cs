@@ -15,7 +15,7 @@ namespace NConfig
         private readonly IList<string> fileNames;
 
 
-        internal NMultifileConfiguration(IConfigurationRepository repository, 
+        internal NMultifileConfiguration(IConfigurationRepository repository,
             INSectionMergerRegistry mergerRegistry, IList<string> fileNames)
         {
             this.repository = repository;
@@ -67,7 +67,7 @@ namespace NConfig
             if (config != null)
                 return config.GetSection(sectionName);
 
-            return null;           
+            return null;
         }
 
 
@@ -108,7 +108,7 @@ namespace NConfig
             string sectionTypeName = section.SectionInformation.Type;
             var sectionType = Type.GetType(sectionTypeName);
 
-            if (typeof (IConfigurationSectionHandler).IsAssignableFrom(sectionType))
+            if (typeof(IConfigurationSectionHandler).IsAssignableFrom(sectionType))
             {
                 var ctor = sectionType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
                 if (ctor == null)
@@ -179,15 +179,27 @@ namespace NConfig
         /// <returns></returns>
         private static IDictionary<string, string> GetAzureEnvironmentVariables(params string[] environmentVarPrefix)
         {
-          var environmentVariables = Environment.GetEnvironmentVariables();
+            var environmentVariables = Environment.GetEnvironmentVariables();
 
-          return environmentVarPrefix
-            .SelectMany(prefix => environmentVariables
-              .Keys.Cast<string>()
-              .Where(key => key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-              .ToDictionary(key => key.Replace(prefix, ""), key => environmentVariables[key] as string)
-            ).ToDictionary(kv => kv.Key, kv => kv.Value);
+            return environmentVarPrefix
+              .SelectMany(prefix => environmentVariables
+                .Keys.Cast<string>()
+                .Where(key => key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                .ToDictionary(key => key.Replace(prefix, ""), key => environmentVariables[key] as string)
+              ).ToDictionary(kv => kv.Key, kv => kv.Value);
         }
+
+        /// <summary>
+        /// mapping of azure connectionstring prefixes to providerNames. We use this information to complete
+        /// the connectionstring objects with the appropiate (default) providername
+        /// </summary>
+        private static Dictionary<string, string> connectionStringTypeProviderNames = new Dictionary<string, string>
+        {
+            { "SQLAZURECONNSTR_", @"System.Data.SqlClient"},
+            { "SQLCONNSTR_", @"System.Data.SqlClient"},
+            { "MYSQLCONNSTR_", @"MySql.Data.MySqlClient"},
+            { "CUSTOMCONNSTR_", @""},
+        };
 
         public ConfigurationSection GetSection(string sectionName)
         {
@@ -203,19 +215,22 @@ namespace NConfig
              */
             if (sectionName.Equals("AppSettings", StringComparison.OrdinalIgnoreCase))
             {
-              var settings = GetAzureEnvironmentVariables(@"APPSETTING_");
-              var environmentVarSection = new AppSettingsSection();
-              foreach (var kv in settings)
-                environmentVarSection.Settings.Add(kv.Key, kv.Value);
-              sections.Add(environmentVarSection);
+                var settings = GetAzureEnvironmentVariables(@"APPSETTING_");
+                var environmentVarSection = new AppSettingsSection();
+                foreach (var kv in settings)
+                    environmentVarSection.Settings.Add(kv.Key, kv.Value);
+                sections.Add(environmentVarSection);
             }
-            else if(sectionName.Equals("ConnectionStrings", StringComparison.OrdinalIgnoreCase))
+            else if (sectionName.Equals("ConnectionStrings", StringComparison.OrdinalIgnoreCase))
             {
-              var settings = GetAzureEnvironmentVariables(@"SQLAZURECONNSTR_", @"SQLCONNSTR_", @"MYSQLCONNSTR_", @"CUSTOMCONNSTR_");
-              var environmentVarSection = new ConnectionStringsSection();
-              foreach (var kv in settings)
-                environmentVarSection.ConnectionStrings.Add(new ConnectionStringSettings(kv.Key, kv.Value));
-              sections.Add(environmentVarSection);
+                var connections = connectionStringTypeProviderNames
+                    .SelectMany(typeKeyVal => GetAzureEnvironmentVariables(typeKeyVal.Key)
+                        .Select(envVar => new ConnectionStringSettings(envVar.Key, envVar.Value, typeKeyVal.Value)));
+
+                var environmentVarSection = new ConnectionStringsSection();
+                foreach (var connection in connections)
+                    environmentVarSection.ConnectionStrings.Add(connection);
+                sections.Add(environmentVarSection);
             }
 
             // Read section from custom configuration files.
@@ -225,13 +240,13 @@ namespace NConfig
             foreach (string fileName in FileNames) // The order of files should be from most Important to lower
             {
                 section = GetFileSection(fileName, sectionName);
-                
+
                 // Filter out non-present in file sections (IsPresent == false).
                 if (section != null)
                 {
-                    if ( IsSectionPresentInConfigFile(section))
+                    if (IsSectionPresentInConfigFile(section))
                         sections.Add(section);
-                    
+
                     // Do not add non present DefaultSections, they will be bank - so no handler processing occurred.
                     // Also this could prevent from returning Default system section. (as with section "system.web/browserCaps" under web)
                     else if (!(section is DefaultSection) && section.SectionInformation.IsDeclared)
@@ -249,7 +264,8 @@ namespace NConfig
                 sections.Add(emptySection);
 
             // Merge collected sections.
-            if (sections.Count > 1) {
+            if (sections.Count > 1)
+            {
                 NSectionMerger merger = MergerRegistry.GetMerger(sections[0].GetType());
                 return merger.Merge(sections);
             }

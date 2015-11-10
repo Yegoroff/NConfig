@@ -216,6 +216,15 @@ for all your configuration files.
 
 If you encounter any issues please do not hesitate to contact me directly or by raising issue on GitHub.
 
+## Windows Activation Service (WAS)
+The above global.asax does not work for non-HTTP protocols such as net.tcp and net.pipe that is supported by the Windows Activation Service (WAS) on Windows Vista. There is no protocol-agnostic counterpart for HttpApplication in this case.
+
+Fortunately, ASP.NET provides a simple hook that works in a protocol agnostic way. The hook is based on the following AppInitialize method:
+    public static void AppInitialize();
+This method can be put in any type that is defined in a C# file in the application’s \App_Code directory. When the AppDomain is started, ASP.NET checks whether there is a type that has such as method (exact name and signature) and invokes it. Note that the AppInitialize method can be only defined once and it has to be in a code file instead of a pre-compiled assembly.
+More details [here] (http://blogs.msdn.com/b/wenlong/archive/2006/01/11/511514.aspx)
+
+
 ### Thanks
 I would like to thank my colleagues for helping me testing and fixing this tool. Also thanks to TLK for his help in this file creation.
 Also I would like to thank the guys at 31337 chat for their support.

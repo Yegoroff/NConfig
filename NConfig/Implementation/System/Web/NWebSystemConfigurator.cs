@@ -54,9 +54,9 @@ namespace NConfig
         private static void UpdateCacheMultiple(NConfigRootReplacement rootReplacement, string configPath, object cacheInternal)
         {
             var cacheMultiple = new ReflectionAccessor(cacheInternal);
-            var caches = cacheMultiple.GetField("_caches") as IEnumerable ?? Enumerable.Empty<object>();
+			var caches = cacheMultiple.GetField("_caches") as IEnumerable ?? Enumerable.Empty<object>();
 
-            foreach (var cache in caches)
+			foreach (var cache in caches)
             {
                 // Caches stored in array ala hash, so there are could be gaps.
                 if (cache == null)
@@ -64,7 +64,22 @@ namespace NConfig
 
                 UpdateCacheSingle(rootReplacement, cache, configPath);
             }
-        }
+
+			//Private field from System.Web.Caching.CacheMultiple used to be called _caches but can also be called _cachesRefs
+			var cacheRefs = cacheMultiple.GetField("_cachesRefs") as IEnumerable ?? Enumerable.Empty<object>();
+			foreach (var cacheRef in cacheRefs)
+			{
+				if (cacheRef == null)
+					continue;
+
+				var cacheAcessor = new ReflectionAccessor(cacheRef);
+				var cache = cacheAcessor.GetProperty("Target");
+
+				if (cache != null)
+					UpdateCacheSingle(rootReplacement, cache, configPath);
+
+			}
+		}
 
         private static void UpdateCacheSingle(NConfigRootReplacement rootReplacement, object cache, string configPath)
         {

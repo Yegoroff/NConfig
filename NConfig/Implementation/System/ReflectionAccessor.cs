@@ -78,7 +78,13 @@ namespace NConfig
 
         public object GetField(string name)
         {
-            return FieldGetter(name)(instance);
+			var field = FieldGetter(name);
+
+			//Dont crash on null values, just return null
+			if (field != null)
+				return field(instance);
+
+			return null;
         }
 
         public void SetField(string name, object value)
@@ -117,7 +123,7 @@ namespace NConfig
             return null;
         }
 
-        private Action<object, object> FieldSetterAction(string name)
+		private Action<object, object> FieldSetterAction(string name)
         {
             FieldInfo fi = AccessedType.GetField(name, accessFlags);
 

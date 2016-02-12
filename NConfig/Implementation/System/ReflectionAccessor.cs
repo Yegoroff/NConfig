@@ -62,12 +62,17 @@ namespace NConfig
 
         public object GetProperty(string name)
         {
-            return PropertyGetter(name)(instance);
+            var getter = PropertyGetter(name);
+            if (getter != null)
+                return getter(instance);
+            return null;
         }
 
         public void SetProperty(string name, object value)
         {
-            PropertySetter(name)(instance, value);
+            var setter = PropertySetter(name);
+            if (setter != null)
+                setter(instance, value);
         }
 
 
@@ -78,12 +83,21 @@ namespace NConfig
 
         public object GetField(string name)
         {
-            return FieldGetter(name)(instance);
+            var field = FieldGetter(name);
+ 
+            //Dont crash on null values, just return null
+            if (field != null)
+                return field(instance);
+
+            return null;
         }
 
         public void SetField(string name, object value)
         {
-            FieldSetter(name)(instance, value);
+            var setter = FieldSetter(name);
+
+            if (setter != null)    
+                setter(instance, value);
         }
 
         public object Execute(string name, params object[] args)

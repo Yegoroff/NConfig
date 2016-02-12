@@ -64,6 +64,20 @@ namespace NConfig
 
                 UpdateCacheSingle(rootReplacement, cache, configPath);
             }
+
+            //Private field from System.Web.Caching.CacheMultiple used to be called _caches but can also be called _cachesRefs
+            var cacheRefs = cacheMultiple.GetField("_cachesRefs") as IEnumerable ?? Enumerable.Empty<object>();
+            foreach (var cacheRef in cacheRefs)
+            {
+                if (cacheRef == null)
+                   continue;
+ 
+                var cacheAcessor = new ReflectionAccessor(cacheRef);
+                var cache = cacheAcessor.GetProperty("Target");
+ 
+                if (cache != null)
+                    UpdateCacheSingle(rootReplacement, cache, configPath); 
+            }
         }
 
         private static void UpdateCacheSingle(NConfigRootReplacement rootReplacement, object cache, string configPath)

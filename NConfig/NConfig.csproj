@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\Mergers\DeepMerger.cs" />
+    <Compile Include="Implementation\Mergers\IMergeableConfigurationCollection.cs" />
     <Compile Include="Implementation\Mergers\PropertyLevelMerger.cs" />
     <Compile Include="INSystemConfigurator.cs" />
     <Compile Include="IConfigurationFactory.cs" />

@@ -30,7 +30,7 @@
 
             var mergedSection = new TSection();
 
-            new DeepSectionMergerImpl().DoMerge(sections, mergedSection);
+            DeepSectionMergerImpl.DoMerge(sections, mergedSection);
 
             return mergedSection;
         }
@@ -57,7 +57,7 @@
             Type sectionType = sections.First().GetType();
             ConfigurationSection mergedSection = (ConfigurationSection) Activator.CreateInstance(sectionType);
 
-            new DeepSectionMergerImpl().DoMerge(sections, mergedSection);
+            DeepSectionMergerImpl.DoMerge(sections, mergedSection);
 
             return mergedSection;
         }
@@ -67,7 +67,7 @@
     /// <summary>
     ///   Used for implementing the generic and non-generic versions of the merger.
     /// </summary>
-    internal class DeepSectionMergerImpl
+    internal static class DeepSectionMergerImpl
     {
         /// <summary>
         ///   Fill in mergedSection as a merger of sections.
@@ -75,7 +75,7 @@
         /// </summary>
         /// <param name="mergedSection">Modified to be the merger</param>
         /// <param name="sections">The sections, in order, to be merged.</param>
-        internal void DoMerge(IEnumerable<ConfigurationSection> sections, ConfigurationSection mergedSection)
+        internal static void DoMerge(IEnumerable<ConfigurationSection> sections, ConfigurationSection mergedSection)
         {
             foreach (PropertyInformation resultProperty in mergedSection.ElementInformation.Properties)
             {
@@ -87,7 +87,7 @@
         }
 
 
-        private void UpdateProperty(List<PropertyInformation> sectionsProperties, PropertyInformation resultProperty)
+        private static void UpdateProperty(List<PropertyInformation> sectionsProperties, PropertyInformation resultProperty)
         {
             var resultType = GetInheritance(resultProperty);
 
@@ -129,7 +129,7 @@
             COLLECTION,
         }
 
-        private InheritanceTypes GetInheritance(PropertyInformation prop)
+        private static InheritanceTypes GetInheritance(PropertyInformation prop)
         {
 
             if (Inherits<ConfigurationElementCollection>(prop.Type))
@@ -147,7 +147,7 @@
             return InheritanceTypes.NONE;
         }
 
-        private void MergeRecursive(List<PropertyInformation> sectionsProperties, PropertyInformation resultProperty)
+        private static void MergeRecursive(List<PropertyInformation> sectionsProperties, PropertyInformation resultProperty)
         {
             var configElement = (ConfigurationElement) resultProperty.Value;
             foreach (PropertyInformation recursiveProperty in configElement.ElementInformation.Properties)
@@ -164,7 +164,7 @@
         /// <summary>
         ///   Merges one property's value. Regarding the hierachy level the first set value is used as result.
         /// </summary>
-        private void MergePropertyValue(List<PropertyInformation> sectionsProperties, PropertyInformation resultProperty)
+        private static void MergePropertyValue(List<PropertyInformation> sectionsProperties, PropertyInformation resultProperty)
         {
             foreach (PropertyInformation sectionProperty in sectionsProperties)
             {
@@ -194,7 +194,7 @@
         ///   b) for each element to add, build up a list of ones to be merged
         ///   c) for each list, merge and add to result
         /// </summary>
-        private void MergeCollection(IEnumerable<PropertyInformation> sectionsProperties,
+        private static void MergeCollection(IEnumerable<PropertyInformation> sectionsProperties,
             IMergeableConfigurationCollection resultElementColl)
         {
             var collectionInSections = CutAfterClear(GetMergeableCollections(sectionsProperties)).ToArray();
@@ -232,7 +232,7 @@
         /// <summary>
         ///   Merges the configs and does the recursion.
         /// </summary>
-        private ConfigurationElement MergeConfigurationElementList(IEnumerable<ConfigurationElement> configs)
+        private static ConfigurationElement MergeConfigurationElementList(IEnumerable<ConfigurationElement> configs)
         {
             //A possible problem may be that we are overriding an element of a different config. for unmerging this is probably wrong
             //However, NConfig does not require us to be able to unmerge...
@@ -268,7 +268,7 @@
         /// <summary>
         ///   Ommit all collections lower an clear tag.
         /// </summary>
-        private IEnumerable<IMergeableConfigurationCollection> CutAfterClear(
+        private static IEnumerable<IMergeableConfigurationCollection> CutAfterClear(
             IEnumerable<IMergeableConfigurationCollection> untypedCollections)
         {
             foreach (var coll in untypedCollections)

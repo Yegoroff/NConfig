@@ -50,6 +50,29 @@ For Microsoft Azure Websites you can set the *NCONFIG_ALIAS* as an App Setting t
 
 **NOTE:**<br/> You should set **Copy To Output Directory = Copy Always** for all your custom configuration files, otherwise they will not be copied to *Bin* folder and NConfig will not find them.
 
+#### Mergers
+
+If you are using your custom configuration sections [https://msdn.microsoft.com/en-us/library/2tw134k3.aspx (HowTo)], the default "merger" utilizes the first section it finds in the hierachy, discarding settings defined in more general ones.
+However, you can switch to your own merger type for each section seperately. You even can write your own mergers yourself!
+
+* AppSettingsMerger
+  Used for the <appSettings> section utilizing only <add> (you cannot remove a setting in higher config files) within all config files.
+
+* ConectionStringsMerger
+  Used for the <appSettings> section utilizing only <add> (you cannot remove a setting in higher config files) within all config files.
+  
+* DeepMerger
+  Goes down the hierachy and tries to merge attributes also within properties. Merges collections (which need to implmenent IMergeableConfigurationCollection) via their key utilizing also <clear> and <remove>.
+  
+* DefaultMerger
+  Uses the first occurance of the whole section in hierachy discarding anything in other config files.
+  
+* PropertyLevelMerger
+  Uses the first occurance of any property in hierachy; does not merge sub-properties or attributes.
+
+You can set the merger via `NConfigurator.RegisterSectionMerger(new DeepMerger<TestConfigSection>());`
+  
+
 #### Sample code from Samples\ConsoleTest:
 ```csharp
 	// Setup NConfigurator to use Custom.config file from Config subfolder.
@@ -94,7 +117,7 @@ Use `log4net.Config` setting in appSettings:
 Or use `[assembly: log4net.Config.XmlConfigurator(ConfigFile = @"Config\separate-log4net.config")]` attribute. <br/>
 Or specify configuration file programmatically
 	
-```csahrp	    
+```csharp	    
         var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"\Config\separate-log4net.config");
         log4net.Config.XmlConfigurator.Configure(new FileInfo(fullPath));
 ```
@@ -216,7 +239,7 @@ for all your configuration files.
 
 If you encounter any issues please do not hesitate to contact me directly or by raising issue on GitHub.
 
-## Windows Activation Service (WAS)
+#### Windows Activation Service (WAS)
 The above global.asax does not work for non-HTTP protocols such as net.tcp and net.pipe that is supported by the Windows Activation Service (WAS) on Windows Vista. There is no protocol-agnostic counterpart for HttpApplication in this case.
 
 Fortunately, ASP.NET provides a simple hook that works in a protocol agnostic way. The hook is based on the following AppInitialize method:
@@ -224,7 +247,21 @@ Fortunately, ASP.NET provides a simple hook that works in a protocol agnostic wa
 This method can be put in any type that is defined in a C# file in the application’s \App_Code directory. When the AppDomain is started, ASP.NET checks whether there is a type that has such as method (exact name and signature) and invokes it. Note that the AppInitialize method can be only defined once and it has to be in a code file instead of a pre-compiled assembly.
 More details [here] (http://blogs.msdn.com/b/wenlong/archive/2006/01/11/511514.aspx)
 
+### FAQ
+
+#### Section in config is ignored / Config file is ignored
+
+There are several reasons, why a config file or section seemingly is "ignored".
+
+* Is the section handler defined at the top of the config file?
+  ` <configSections><section name="testConfigSection" type="Custom.Config.TestConfigSection, TestConfig" /></configSections>`
+  
+* Did you set up the merger correctly?
+  `NConfigurator.RegisterSectionMerger(new DeepMerger<TestConfigSection>());`
+
 
 ### Thanks
 I would like to thank my colleagues for helping me testing and fixing this tool. Also thanks to TLK for his help in this file creation.
 Also I would like to thank the guys at 31337 chat for their support.
+
+The DeepMerger is a contribution by World Direct eBusiness Software GmbH.

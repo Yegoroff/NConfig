@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementation\Mergers\DeepMerger.cs" />
-    <Compile Include="Implementation\Mergers\IMergeableConfigurationCollection.cs" />
+    <Compile Include="IMergeableConfigurationCollection.cs" />
     <Compile Include="Implementation\Mergers\PropertyLevelMerger.cs" />
     <Compile Include="INSystemConfigurator.cs" />
     <Compile Include="IConfigurationFactory.cs" />
@@ -57,6 +57,7 @@
     <Compile Include="Implementation\Mergers\AppSettingsMerger.cs" />
     <Compile Include="Implementation\Mergers\ConectionStringsMerger.cs" />
     <Compile Include="Implementation\Mergers\DefaultMerger.cs" />
+    <Compile Include="MergeableConfigurationCollection.cs" />
     <Compile Include="NSectionMerger.cs" />
     <Compile Include="Implementation\ConfigurationRepositoryWeb.cs" />
     <Compile Include="Util\ConfigurationExtension.cs" />

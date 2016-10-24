@@ -99,7 +99,7 @@
                     if (!(resultProperty.Value is IMergeableConfigurationCollection))
                     {
                         throw new ConfigurationErrorsException(
-                            $"Collection to merge {resultProperty.Name} is not of type {nameof(IMergeableConfigurationCollection)}. Necessary for the merger.");
+                            string.Format("Collection to merge {0} is not of type IMergeableConfigurationCollection. Necessary for the merger.", resultProperty.Name));
                     }
 
                     var resultElementColl = (IMergeableConfigurationCollection) resultProperty.Value;

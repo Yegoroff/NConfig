@@ -58,6 +58,7 @@
     <Compile Include="ConfigurationRepositoryTests.cs" />
     <Compile Include="ConfigurationRepositoryWebTests.cs" />
     <Compile Include="MergeSection.cs" />
+    <Compile Include="DeepMergerTests.cs" />
     <Compile Include="PropertyLevelMergerTests.cs" />
     <Compile Include="TestSectionHandler.cs" />
     <Compile Include="TestSection.cs" />
@@ -85,6 +86,18 @@
     </None>
     <None Include="Configs\NConfigTest.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="DeepMergeConfigs\Test1.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DeepMergeConfigs\Test2.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DeepMergeConfigs\Test3.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DeepMergeConfigs\Test4.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

@@ -38,15 +38,23 @@ namespace NConfig
             string configPath = "dmachine/webroot/" + siteId;
 
             var httpRuntime = new ReflectionAccessor(systemWebAss.GetType("System.Web.HttpRuntime"));
-            object cacheInternal = httpRuntime.GetProperty("CacheInternal");
 
-            var rootReplacement = replacingSystem.Root as NConfigRootReplacement;
+            try
+            {
+                object cacheInternal = httpRuntime.GetProperty("CacheInternal");
 
-            // In case of single CPU internal caching uses CacheSingle.
-            if (cacheInternal.GetType().Name == "CacheSingle")
-                UpdateCacheSingle(rootReplacement, cacheInternal, configPath);
-            else
-                UpdateCacheMultiple(rootReplacement, configPath, cacheInternal);
+                var rootReplacement = replacingSystem.Root as NConfigRootReplacement;
+
+                // In case of single CPU internal caching uses CacheSingle.
+                if (cacheInternal.GetType().Name == "CacheSingle")
+                    UpdateCacheSingle(rootReplacement, cacheInternal, configPath);
+                else
+                    UpdateCacheMultiple(rootReplacement, configPath, cacheInternal);
+            }
+            catch (NullReferenceException)
+            {
+                // There is no CacheInternal in .Net 4.7.2
+            }
 
             OriginalConfiguration = originalConfigSystem;
         }

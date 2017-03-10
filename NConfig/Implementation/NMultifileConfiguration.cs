@@ -205,14 +205,15 @@ namespace NConfig
         {
             var sections = new List<ConfigurationSection>();
 
-            /**
-             * Azure overrides appsettings/connectionstrings which are configured in the portal on first load of the web.config 
-             * But if we re-configure those settings in a {hostname}.custom.config then the ordering is incorrect.
-             * 
-             * To fix this we can extract those portal-configured settings from the environment vars by their
-             * prefix and add these to the initial section (which has the highest priority when merging config sections
-             * back to one section
-             */
+            /*
+              Azure overrides appsettings/connectionstrings which are configured in the portal on first load of the web.config 
+              But if we re-configure those settings in a {hostname}.custom.config then the ordering is incorrect.
+             
+              To fix this we can extract those portal-configured settings from the environment vars by their
+              prefix and add these to the initial section (which has the highest priority when merging config sections
+              back to one section
+            */
+
             if (sectionName.Equals("AppSettings", StringComparison.OrdinalIgnoreCase))
             {
                 var settings = GetAzureEnvironmentVariables(@"APPSETTING_");

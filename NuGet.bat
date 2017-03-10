@@ -1,12 +1,12 @@
-@set DEVENV100="%programfiles(x86)%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe"
-@if "%programfiles(x86)%"=="" (@set DEVENV100="%programfiles%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe")
+@set DEVENV100="%programfiles(x86)%\Microsoft Visual Studio 11.0\Common7\IDE\devenv.exe"
+@if "%programfiles(x86)%"=="" (@set DEVENV100="%programfiles%\Microsoft Visual Studio 11.0\Common7\IDE\devenv.exe")
 
 @set NUGET="Lib\NuGet.CommandLine.1.6.0\tools\NuGet.exe"
 
 @echo ==========================
 @echo Building NConfig.
 @rmdir bin /s /q
-%DEVENV100% /nologo /build Release /project NConfig "NConfig.sln"
+%DEVENV100% /nologo /build Release "NConfig.sln"
 @if errorlevel 1 goto error
 
 @echo ==========================

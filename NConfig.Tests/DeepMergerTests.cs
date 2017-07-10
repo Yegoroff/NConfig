@@ -50,11 +50,11 @@ namespace NConfig.Tests {
         public void DeepMerger_MergeCollections_ClearCollection() {
             DeepMergerTestSection testSection = GetMergedConfig();
             
-            var coll = testSection?.ClearCollection;
-            var test1 = coll?.FirstOrDefault(x => x.Name == "test1");
-            var test2 = coll?.FirstOrDefault(x => x.Name == "test2");
-            var test3 = coll?.FirstOrDefault(x => x.Name == "test3");
-            var test4 = coll?.FirstOrDefault(x => x.Name == "test4");
+            var coll = testSection.ClearCollection;
+            var test1 = coll.FirstOrDefault(x => x.Name == "test1");
+            var test2 = coll.FirstOrDefault(x => x.Name == "test2");
+            var test3 = coll.FirstOrDefault(x => x.Name == "test3");
+            var test4 = coll.FirstOrDefault(x => x.Name == "test4");
 
             Assert.IsNotNull(testSection);
             Assert.IsNotNull(coll);
@@ -76,12 +76,12 @@ namespace NConfig.Tests {
         public void DeepMerger_MergeCollections_RemoveCollection() {
             DeepMergerTestSection testSection = GetMergedConfig();
 
-            var coll = testSection?.RemoveCollection;
-            var test1 = coll?.FirstOrDefault(x => x.Name == "removeSame");
-            var test2 = coll?.FirstOrDefault(x => x.Name == "fullRemove");
-            var test3 = coll?.FirstOrDefault(x => x.Name == "fullRemoveLower");
-            var test4 = coll?.FirstOrDefault(x => x.Name == "removedLower");
-            var test5 = coll?.FirstOrDefault(x => x.Name == "removedLowerWithSpace");
+            var coll = testSection.RemoveCollection;
+            var test1 = coll.FirstOrDefault(x => x.Name == "removeSame");
+            var test2 = coll.FirstOrDefault(x => x.Name == "fullRemove");
+            var test3 = coll.FirstOrDefault(x => x.Name == "fullRemoveLower");
+            var test4 = coll.FirstOrDefault(x => x.Name == "removedLower");
+            var test5 = coll.FirstOrDefault(x => x.Name == "removedLowerWithSpace");
 
             Assert.IsNotNull(testSection);
             Assert.IsNotNull(coll);
@@ -104,15 +104,15 @@ namespace NConfig.Tests {
         public void DeepMerger_MergeCollections_SubCollection_Merged() {
             DeepMergerTestSection testSection = GetMergedConfig();
 
-            var coll = testSection?.SubCollection;
-            var test1Coll = coll?.FirstOrDefault(x => x.Name == "test1");
-            var test2Coll = coll?.FirstOrDefault(x => x.Name == "test2");
-            var test3Coll = coll?.FirstOrDefault(x => x.Name == "test3");
+            var coll = testSection.SubCollection;
+            var test1Coll = coll.FirstOrDefault(x => x.Name == "test1");
+            var test2Coll = coll.FirstOrDefault(x => x.Name == "test2");
+            var test3Coll = coll.FirstOrDefault(x => x.Name == "test3");
 
-            var test1T1 = test1Coll?.SubCollection?.FirstOrDefault(x => x.Name == "t1");
-            var test1T2 = test1Coll?.SubCollection?.FirstOrDefault(x => x.Name == "t2");
-            var test1T3 = test1Coll?.SubCollection?.FirstOrDefault(x => x.Name == "t3");
-            var test1T4 = test1Coll?.SubCollection?.FirstOrDefault(x => x.Name == "removed");
+            var test1T1 = test1Coll.SubCollection.FirstOrDefault(x => x.Name == "t1");
+            var test1T2 = test1Coll.SubCollection.FirstOrDefault(x => x.Name == "t2");
+            var test1T3 = test1Coll.SubCollection.FirstOrDefault(x => x.Name == "t3");
+            var test1T4 = test1Coll.SubCollection.FirstOrDefault(x => x.Name == "removed");
 
             // The collections are all there
             Assert.IsNotNull(testSection);
@@ -137,15 +137,14 @@ namespace NConfig.Tests {
         public void DeepMerger_MergeCollections_SubCollection_NoSideEffects() {
             DeepMergerTestSection testSection = GetMergedConfig();
 
-            var coll = testSection?.SubCollection;
-            var test1Coll = coll?.FirstOrDefault(x => x.Name == "test1");
-            var test2Coll = coll?.FirstOrDefault(x => x.Name == "test2");
-            var test3Coll = coll?.FirstOrDefault(x => x.Name == "test3");
+            var coll = testSection.SubCollection;
+            var test1Coll = coll.FirstOrDefault(x => x.Name == "test1");
+            var test2Coll = coll.FirstOrDefault(x => x.Name == "test2");
+            var test3Coll = coll.FirstOrDefault(x => x.Name == "test3");
 
-            var test2T1 = test2Coll?.SubCollection?.FirstOrDefault(x => x.Name == "t1");
-            var test2T2 = test2Coll?.SubCollection?.FirstOrDefault(x => x.Name == "t2");
-            //var test2T3 = test2Coll?.SubCollection?.FirstOrDefault(x => x.Name == "t3");
-            var test2T4 = test2Coll?.SubCollection?.FirstOrDefault(x => x.Name == "removed");
+            var test2T1 = test2Coll.SubCollection.FirstOrDefault(x => x.Name == "t1");
+            var test2T2 = test2Coll.SubCollection.FirstOrDefault(x => x.Name == "t2");
+            var test2T4 = test2Coll.SubCollection.FirstOrDefault(x => x.Name == "removed");
             
 
             // The collections are all there
@@ -167,10 +166,9 @@ namespace NConfig.Tests {
         public void DeepMerger_MergeCollections_SubCollection_Hopping() {
             DeepMergerTestSection testSection = GetMergedConfig();
 
-            var coll = testSection?.SubCollection;
-            var test3Coll = coll?.FirstOrDefault(x => x.Name == "test3");
-
-            var test3T1 = test3Coll?.SubCollection?.FirstOrDefault(x => x.Name == "t1");
+            var coll = testSection.SubCollection;
+            var test3Coll = coll.FirstOrDefault(x => x.Name == "test3");
+            var test3T1 = test3Coll.SubCollection.FirstOrDefault(x => x.Name == "t1");
 
             // The collections are all there
             Assert.IsNotNull(testSection);
@@ -185,27 +183,56 @@ namespace NConfig.Tests {
     #region DeepMergerTestSection
 
     public class DeepMergerTestSection : ConfigurationSection {
+
         [ConfigurationProperty("ClearCollection", IsDefaultCollection = false)]
-        public TestElementCollectionElement ClearCollection => base["ClearCollection"] as TestElementCollectionElement;
+        public TestElementCollectionElement ClearCollection
+        {
+            get { return (TestElementCollectionElement)this["ClearCollection"]; }
+            set { this["value"] = value; }
+        } 
 
         [ConfigurationProperty("RemoveCollection", IsDefaultCollection = false)]
-        public TestElementCollectionElement RemoveCollection => base["RemoveCollection"] as TestElementCollectionElement;
+        public TestElementCollectionElement RemoveCollection
+        {
+            get { return (TestElementCollectionElement)this["RemoveCollection"]; }
+            set { this["RemoveCollection"] = value; }
+        }
 
         [ConfigurationProperty("SubCollection", IsDefaultCollection = false)]
-        public TestCollectionElement SubCollection => base["SubCollection"] as TestCollectionElement;
+        public TestCollectionElement SubCollection
+        {
+            get { return (TestCollectionElement)this["SubCollection"]; }
+            set { this["SubCollection"] = value; }
+        } 
 
         #region MergedProperties
         [ConfigurationProperty("OverriddenProperty", IsDefaultCollection = false)]
-        public StringElement OverriddenProperty => base["OverriddenProperty"] as StringElement;
+        public StringElement OverriddenProperty
+        {
+            get { return (StringElement)this["OverriddenProperty"]; }
+            set { this["OverriddenProperty"] = value; }
+        }
 
         [ConfigurationProperty("JumpOverProperty", IsDefaultCollection = false)]
-        public StringElement JumpOverProperty => base["JumpOverProperty"] as StringElement;
+        public StringElement JumpOverProperty
+        {
+            get { return (StringElement)this["JumpOverProperty"]; }
+            set { this["JumpOverProperty"] = value; }            
+        }
 
         [ConfigurationProperty("NewEmptyProperty", IsDefaultCollection = false)]
-        public StringElement NewEmptyProperty => base["NewEmptyProperty"] as StringElement;
+        public StringElement NewEmptyProperty
+        {
+            get { return (StringElement)this["NewEmptyProperty"]; }
+            set { this["NewEmptyProperty"] = value; }
+        }
 
         [ConfigurationProperty("NewNullProperty", IsDefaultCollection = false)]
-        public TestElement NewNullProperty => base["NewNullProperty"] as TestElement;
+        public TestElement NewNullProperty
+        {
+            get { return (TestElement)this["NewNullProperty"]; }
+            set { this["NewNullProperty"] = value; }
+        }
         #endregion
     }
 
@@ -241,13 +268,20 @@ namespace NConfig.Tests {
         }
 
         [ConfigurationProperty("values", IsRequired = false, IsKey = false)]
-        public TestSubCollectionElement SubCollection => base["values"] as TestSubCollectionElement;
+        public TestSubCollectionElement SubCollection
+        {
+            get { return (TestSubCollectionElement)this["values"]; }
+            set { this["values"] = value; }  
+        }
         
-        public HashSet<string> Subs => new HashSet<string>(SubCollection.Select(sub => sub.Value));
+        public HashSet<string> Subs
+        {
+            get { return new HashSet<string>(SubCollection.Select(sub => sub.Value)); }
+        } 
 
         public override string ToString() {
             var roles = string.Join("', '", Subs);
-            return $"User: {Name}, Values: ('{roles}'), " + base.ToString();
+            return string.Format("User: {0}, Values: ('{1}'), ", Name, roles) + base.ToString();
         }
     }
 
@@ -274,7 +308,7 @@ namespace NConfig.Tests {
         }
 
         public override string ToString() {
-            return $"{Name} :: {Value}";
+            return string.Format("{0} :: {1}", Name, Value);
         }
     }
     #endregion

@@ -72,7 +72,7 @@ namespace NConfig
             }
 
             // For several IsKey = true properties: use an aggregated key so that they are compared together
-            return string.Join(":--:", keyElements.Select(x => x.Value.ToString()));
+            return string.Join(":--:", keyElements.Select(x => x.Value.ToString()).ToArray() );
         }
 
         void IMergeableConfigurationCollection.Add(ConfigurationElement element)

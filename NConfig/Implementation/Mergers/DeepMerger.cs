@@ -1,7 +1,6 @@
 ﻿namespace NConfig
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Configuration;
     using System.Linq;
@@ -30,7 +29,7 @@
 
             var mergedSection = new TSection();
 
-            DeepSectionMergerImpl.DoMerge(sections, mergedSection);
+            DeepSectionMergerImpl.DoMerge(sections.Cast<ConfigurationSection>(), mergedSection);
 
             return mergedSection;
         }
@@ -200,7 +199,7 @@
             var collectionInSections = CutAfterClear(GetMergeableCollections(sectionsProperties)).ToArray();
 
             // key -> mergeList
-            var allElements = new ConcurrentDictionary<object, List<ConfigurationElement>>();
+            var allElements = new Dictionary<object, List<ConfigurationElement>>();
 
             for (int i = 0; i < collectionInSections.Length; i++)
             {
@@ -208,15 +207,16 @@
                 {
 
                     if (IsRemoved(collectionInSections, item, i))
-                    {
                         // there was a :remove: in higher order, so ignore this
                         // ignores also "later" elements after an :remove:
-                        continue;
-                    }
+                        continue;                    
 
                     // Adds into list (or start a new one)
                     var key = collectionInSections[i].GetElementKeyForMerge(item);
-                    var list = allElements.GetOrAdd(key, new List<ConfigurationElement>());
+                    if (!allElements.ContainsKey(key))
+                        allElements.Add(key, new List<ConfigurationElement>());
+
+                    var list = allElements[key];
                     list.Add(item);
                 }
             }
@@ -295,25 +295,12 @@
         }
 
 
-
         /// <summary>
         ///   Does type inherit from TBase?
         /// </summary>
         private static bool Inherits<TBase>(Type type) where TBase : class
         {
-            Type cur = type;
-
-            while (cur != null)
-            {
-                if (cur == typeof(TBase))
-                {
-                    return true;
-                }
-
-                cur = cur.BaseType;
-            }
-
-            return false;
+            return typeof (TBase).IsAssignableFrom(type);
         }
 
         private static bool IsConfigurationPropertyDefined(PropertyInformation property)

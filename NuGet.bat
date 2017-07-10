@@ -6,7 +6,7 @@
 @echo ==========================
 @echo Building NConfig.
 @rmdir bin /s /q
-%DEVENV100% /nologo /build Release /project NConfig "NConfig.sln"
+%DEVENV100% /nologo /build Release "NConfig.sln"
 @if errorlevel 1 goto error
 
 @echo ==========================

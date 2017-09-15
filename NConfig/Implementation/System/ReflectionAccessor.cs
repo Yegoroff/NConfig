@@ -144,7 +144,7 @@ namespace NConfig
         private Func<object,object> PropertyGetterFunc(string name)
         {
             PropertyInfo pi = AccessedType.GetProperty(name, accessFlags);
-            var getter = pi.GetGetMethod(true);
+            var getter = pi?.GetGetMethod(true);
             if (getter != null)
                 return o => getter.Invoke(o, null);
             return null;
@@ -153,7 +153,7 @@ namespace NConfig
         private Action<object, object> PropertySetterAction(string name)
         {
             PropertyInfo pi = AccessedType.GetProperty(name, accessFlags);
-            var setter = pi.GetSetMethod(true);
+            var setter = pi?.GetSetMethod(true);
             if (setter != null)
                 return (i, v) => setter.Invoke(i, new[] {v});
             return null;

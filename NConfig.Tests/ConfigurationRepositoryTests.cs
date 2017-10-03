@@ -44,7 +44,7 @@ namespace NConfig.Tests
             string configurationFile = "Configs\\NConfigTest.config";
 
             string validPath = AppDomain.CurrentDomain.BaseDirectory;
-            validPath = Path.Combine(Path.GetDirectoryName(validPath), "Debug\\" + configurationFile);
+            validPath = Path.Combine(Path.GetDirectoryName(validPath), configurationFile);
 
             string absolutePath = reposiotryUnderTest.TestToAbsolutePath(configurationFile);
 

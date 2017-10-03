@@ -2,7 +2,7 @@
 
 @echo ==========================
 @echo NuGet package publishing.
-@%NUGET% Push NuGet\NConfig.1.1.22.nupkg
+@%NUGET% Push NuGet\NConfig.1.1.23.nupkg
 @if not errorlevel 0 goto error
 
 @echo NConfig publishing sucessfull.
